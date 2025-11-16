@@ -1,0 +1,41 @@
+---
+alwaysApply: true
+---
+
+# ------------------------------------------------------------------------------
+# Git Commit Message Template for EasyResume
+# ------------------------------------------------------------------------------
+# 格式说明：
+# <type>(<scope>): <summary>
+#
+# type: 必填，提交类型：
+#   feat      新功能
+#   fix       修复 bug
+#   perf      性能优化
+#   refactor  重构（无功能变化）
+#   style     代码格式（无业务逻辑）
+#   docs      文档更新
+#   test      测试相关
+#   build     构建系统或依赖调整
+#   ci        CI/CD 配置变更
+#   chore     其他不会影响代码的变更
+#   revert    回滚提交
+#
+# scope: 可选，影响的模块（推荐使用）：
+#   agent, tools, workflow, ui, dataset, clean, label, augment, synthesis,
+#   api, service, vector, index, config, docs
+#
+# summary: 必填，简短描述本次提交内容，不超过60字符，不以句号结尾。
+#
+# body: 可选，详细说明内容、原因、变更点等。可使用列表增强可读性。
+#
+# footer: 可选，用于 Issue ID 或 BREAKING CHANGES。
+#   Issue: #123
+#   BREAKING CHANGE: 描述变更
+# ------------------------------------------------------------------------------
+
+<type>(<scope>): <summary>
+
+<body>
+
+<footer>
