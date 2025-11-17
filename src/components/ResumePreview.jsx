@@ -601,13 +601,13 @@ function EducationSection({ education, isEmpty, style }) {
   
   const periodText = GetPeriodText()
   
-  // 构建左侧：学校名称 · 学历（学制） · 专业
+  // 构建左侧：学校名称 · 专业 · 学历（学制）
   const leftItems = []
   if (education.school && education.school.trim()) {
     leftItems.push(education.school)
   }
-  if (education.level && education.level.trim()) {
-    leftItems.push(education.level)
+  if (education.major && education.major.trim()) {
+    leftItems.push(education.major)
   }
   if (education.degree && education.degree.trim()) {
     // 如果有学制，将学制添加到学历后面
@@ -615,11 +615,15 @@ function EducationSection({ education, isEmpty, style }) {
     if (education.duration) {
       degreeText = `${education.degree}（${education.duration}年制）`
     }
+    // 双一流
+    if (education.level && education.level.trim()) {
+      degreeText = `${degreeText}（${education.level}）`
+    }
     leftItems.push(degreeText)
   }
-  if (education.major && education.major.trim()) {
-    leftItems.push(education.major)
-  }
+  
+  
+  
   const separator = style?.tagsSeparator || '｜'
   const leftText = leftItems.join(separator)
   
@@ -635,7 +639,7 @@ function EducationSection({ education, isEmpty, style }) {
       {hasEducationData ? (
         <>
           <div className="flex items-center justify-between gap-4 mb-2" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>
-            {/* 左侧：学校名称 · 学历 · 专业 */}
+            {/* 左侧：学校名称 · 专业 · 学历 */}
             <div className="flex-shrink-0">
               {leftText || ''}
             </div>
