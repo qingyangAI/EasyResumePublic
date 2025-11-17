@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
+      maxWidth: {
+        '7xlplus': '115rem', // 你自定义的值
+      }
     },
   },
   plugins: [],

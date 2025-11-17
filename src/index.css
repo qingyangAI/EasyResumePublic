@@ -9,8 +9,15 @@
 }
 
 @media print {
+  /* 隐藏浏览器默认的页眉页脚 */
   @page {
     margin: 1cm;
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
   }
   
   body {
@@ -21,14 +28,137 @@
     display: none !important;
   }
   
+  /* 隐藏配置面板和空模块提示 */
+  .no-print {
+    display: none !important;
+  }
+  
+  /* 只显示简历预览内容 */
+  main > div.flex {
+    display: block !important;
+  }
+  
+  main > div.flex > div:first-child,
+  main > div.flex > div:last-child {
+    display: none !important;
+  }
+  
+  main > div.flex > div:nth-child(2) {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    flex: none !important;
+  }
+  
   #resume-preview {
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    max-width: 100% !important;
   }
   
-  .no-print {
-    display: none !important;
+  /* 不显示页码时的样式 */
+  body.print-no-page-number @page {
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+  }
+  
+  /* 底部居中页码 */
+  body.print-page-bottom-center @page {
+    @bottom-center {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+      margin-bottom: 0.5cm;
+    }
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-right { content: ""; }
+  }
+  
+  /* 底部右侧页码 */
+  body.print-page-bottom-right @page {
+    @bottom-right {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+      margin-bottom: 0.5cm;
+      margin-right: 0.5cm;
+    }
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+  }
+  
+  /* 底部左侧页码 */
+  body.print-page-bottom-left @page {
+    @bottom-left {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+      margin-bottom: 0.5cm;
+      margin-left: 0.5cm;
+    }
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+  }
+  
+  /* 顶部居中页码 */
+  body.print-page-top-center @page {
+    @top-center {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+      margin-top: 0.5cm;
+    }
+    @top-left { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+  }
+  
+  /* 顶部右侧页码 */
+  body.print-page-top-right @page {
+    @top-right {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+      margin-top: 0.5cm;
+      margin-right: 0.5cm;
+    }
+    @top-left { content: ""; }
+    @top-center { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
+  }
+  
+  /* 顶部左侧页码 */
+  body.print-page-top-left @page {
+    @top-left {
+      content: counter(page);
+      font-size: 10pt;
+      color: #666;
+      margin-top: 0.5cm;
+      margin-left: 0.5cm;
+    }
+    @top-center { content: ""; }
+    @top-right { content: ""; }
+    @bottom-left { content: ""; }
+    @bottom-center { content: ""; }
+    @bottom-right { content: ""; }
   }
 }
 
