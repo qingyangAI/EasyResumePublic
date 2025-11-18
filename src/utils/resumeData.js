@@ -85,8 +85,10 @@ export const GetDefaultResumeData = () => ({
     targetCity: '',
     works: []
   },
-  sectionOrder: ['tags', 'advantages', 'education', 'workExperiences', 'honors', 'projects'],
+  sectionOrder: ['tags', 'reusableCapabilities', 'careerObjective', 'advantages', 'education', 'workExperiences', 'honors', 'projects'],
   tags: [],
+  reusableCapabilities: [],
+  careerObjective: '',
   advantages: [],
   honors: [],
   workExperiences: [],
@@ -196,6 +198,86 @@ export const LoadResumeStyle = () => {
   }
 }
 
+export const SaveFileNameTemplate = (template) => {
+  try {
+    localStorage.setItem('resumeFileNameTemplate', JSON.stringify(template))
+  } catch (error) {
+    console.error('保存文件名模板失败:', error)
+  }
+}
+
+export const LoadFileNameTemplate = () => {
+  try {
+    const saved = localStorage.getItem('resumeFileNameTemplate')
+    if (saved) {
+      return JSON.parse(saved)
+    }
+    // 默认模板：姓名-职位-手机号
+    return {
+      template: '{name}-{title}-{phone}',
+      customTemplate: ''
+    }
+  } catch (error) {
+    console.error('加载文件名模板失败:', error)
+    return {
+      template: '{name}-{title}-{phone}',
+      customTemplate: ''
+    }
+  }
+}
+
+// 根据模板和数据生成文件名（不含扩展名）
+export const GenerateFileName = (data, fileExtension = '') => {
+  const templateData = LoadFileNameTemplate()
+  const template = templateData.customTemplate || templateData.template || '{name}-{title}-{phone}'
+  
+  // 获取个人信息
+  const personalInfo = data?.personalInfo || {}
+  const name = (personalInfo.name || '').trim() || '姓名'
+  const title = (personalInfo.title || '').trim() || '职位'
+  const phone = (personalInfo.phone || '').trim() || '手机号'
+  const email = (personalInfo.email || '').trim() || '邮箱'
+  const age = (personalInfo.age || '').trim() || '年龄'
+  const targetCity = (personalInfo.targetCity || '').trim() || '目标城市'
+  
+  // 替换模板变量
+  let fileName = template
+    .replace(/\{name\}/g, name)
+    .replace(/\{title\}/g, title)
+    .replace(/\{phone\}/g, phone)
+    .replace(/\{email\}/g, email)
+    .replace(/\{age\}/g, age)
+    .replace(/\{targetCity\}/g, targetCity)
+  
+  // 清理文件名中的非法字符
+  fileName = fileName.replace(/[<>:"/\\|?*]/g, '-').replace(/\s+/g, '-')
+  
+  // 如果文件名为空或只包含占位符，使用默认名称
+  if (!fileName || fileName === '姓名-职位-手机号' || fileName.match(/^[\s-]+$/)) {
+    fileName = `resume`
+  }
+  
+  // 添加时间戳：年月日时分秒
+  const now = new Date()
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  const hours = String(now.getHours()).padStart(2, '0')
+  const minutes = String(now.getMinutes()).padStart(2, '0')
+  const seconds = String(now.getSeconds()).padStart(2, '0')
+  const timestamp = `${year}${month}${day}${hours}${minutes}${seconds}`
+  
+  // 在文件名末尾添加时间戳
+  fileName = `${fileName}-${timestamp}`
+  
+  // 添加扩展名
+  if (fileExtension) {
+    fileName = `${fileName}.${fileExtension}`
+  }
+  
+  return fileName
+}
+
 export const ExportResumeJSON = (data) => {
   try {
     const jsonString = JSON.stringify(data, null, 2)
@@ -203,7 +285,7 @@ export const ExportResumeJSON = (data) => {
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `resume-${new Date().getTime()}.json`
+    link.download = GenerateFileName(data, 'json')
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
@@ -262,6 +344,16 @@ export const DownloadExcelTemplate = async () => {
       ['']
     ]
     
+    const reusableCapabilitiesSheet = [
+      ['可复用能力（每行一个）'],
+      ['']
+    ]
+    
+    const careerObjectiveSheet = [
+      ['求职目标（一句话）'],
+      ['']
+    ]
+    
     const advantagesSheet = [
       ['个人优势（每行一个）'],
       ['']
@@ -316,6 +408,8 @@ export const DownloadExcelTemplate = async () => {
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(personalInfoSheet), '个人信息')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(worksSheet), '作品集')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(tagsSheet), '专业标签')
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(reusableCapabilitiesSheet), '可复用能力')
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(careerObjectiveSheet), '求职目标')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(advantagesSheet), '个人优势')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(honorsSheet), '荣誉证书')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(workExpSheet), '工作经历')
@@ -375,6 +469,20 @@ export const ExportResumeExcel = async (data) => {
       data.tags.forEach(tag => tagsSheet.push([tag]))
     } else {
       tagsSheet.push([''])
+    }
+    
+    const reusableCapabilitiesSheet = [['可复用能力（每行一个）']]
+    if (data.reusableCapabilities && data.reusableCapabilities.length > 0) {
+      data.reusableCapabilities.forEach(cap => reusableCapabilitiesSheet.push([cap]))
+    } else {
+      reusableCapabilitiesSheet.push([''])
+    }
+    
+    const careerObjectiveSheet = [['求职目标（一句话）']]
+    if (data.careerObjective && data.careerObjective.trim()) {
+      careerObjectiveSheet.push([data.careerObjective])
+    } else {
+      careerObjectiveSheet.push([''])
     }
     
     const advantagesSheet = [['个人优势（每行一个）']]
@@ -480,6 +588,8 @@ export const ExportResumeExcel = async (data) => {
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(personalInfoSheet), '个人信息')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(worksSheet), '作品集')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(tagsSheet), '专业标签')
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(reusableCapabilitiesSheet), '可复用能力')
+      XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(careerObjectiveSheet), '求职目标')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(advantagesSheet), '个人优势')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(honorsSheet), '荣誉证书')
       XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet(workExpSheet), '工作经历')
@@ -495,7 +605,7 @@ export const ExportResumeExcel = async (data) => {
     }
     
     try {
-      XLSX.writeFile(workbook, `resume-${new Date().getTime()}.xlsx`)
+      XLSX.writeFile(workbook, GenerateFileName(data, 'xlsx'))
       return true
     } catch (writeError) {
       console.error('写入文件失败:', writeError)
@@ -557,6 +667,21 @@ export const ImportResumeExcel = (file) => {
           const [tag] = row
           if (tag) result.tags.push(tag)
         })
+        
+        const reusableCapabilitiesData = getSheetData('可复用能力')
+        result.reusableCapabilities = []
+        reusableCapabilitiesData.forEach((row, index) => {
+          if (index === 0) return
+          const [cap] = row
+          if (cap) result.reusableCapabilities.push(cap)
+        })
+        
+        const careerObjectiveData = getSheetData('求职目标')
+        if (careerObjectiveData.length > 1 && careerObjectiveData[1] && careerObjectiveData[1][0]) {
+          result.careerObjective = careerObjectiveData[1][0]
+        } else {
+          result.careerObjective = ''
+        }
         
         const advantagesData = getSheetData('个人优势')
         result.advantages = []

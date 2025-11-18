@@ -13,6 +13,7 @@ import {
   sortableKeyboardCoordinates,
   useSortable,
   verticalListSortingStrategy,
+  rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
@@ -28,16 +29,46 @@ function ResumeEditor({ data, onChange }) {
   useEffect(() => {
     if (data) {
       // 确保sectionOrder包含所有必要的section，兼容旧数据
-      const defaultOrder = ["tags", "advantages", "education", "workExperiences", "honors", "projects"]
+      const defaultOrder = ["tags", "reusableCapabilities", "careerObjective", "advantages", "education", "workExperiences", "honors", "projects"]
       let sectionOrder = data.sectionOrder || [...defaultOrder]
       
-      // 如果旧数据中没有advantages，添加到合适的位置（在tags之后）
-      if (!sectionOrder.includes("advantages")) {
+      // 如果旧数据中没有reusableCapabilities，添加到合适的位置（在tags之后）
+      if (!sectionOrder.includes("reusableCapabilities")) {
         const tagsIndex = sectionOrder.indexOf("tags")
         if (tagsIndex >= 0) {
-          sectionOrder.splice(tagsIndex + 1, 0, "advantages")
+          sectionOrder.splice(tagsIndex + 1, 0, "reusableCapabilities")
         } else {
-          sectionOrder.unshift("advantages")
+          sectionOrder.unshift("reusableCapabilities")
+        }
+      }
+      
+      // 如果旧数据中没有careerObjective，添加到合适的位置（在advantages之前）
+      if (!sectionOrder.includes("careerObjective")) {
+        const advantagesIndex = sectionOrder.indexOf("advantages")
+        if (advantagesIndex >= 0) {
+          sectionOrder.splice(advantagesIndex, 0, "careerObjective")
+        } else {
+          const tagsIndex = sectionOrder.indexOf("tags")
+          if (tagsIndex >= 0) {
+            sectionOrder.splice(tagsIndex + 1, 0, "careerObjective")
+          } else {
+            sectionOrder.unshift("careerObjective")
+          }
+        }
+      }
+      
+      // 如果旧数据中没有advantages，添加到合适的位置（在careerObjective之后）
+      if (!sectionOrder.includes("advantages")) {
+        const careerObjectiveIndex = sectionOrder.indexOf("careerObjective")
+        if (careerObjectiveIndex >= 0) {
+          sectionOrder.splice(careerObjectiveIndex + 1, 0, "advantages")
+        } else {
+          const tagsIndex = sectionOrder.indexOf("tags")
+          if (tagsIndex >= 0) {
+            sectionOrder.splice(tagsIndex + 1, 0, "advantages")
+          } else {
+            sectionOrder.unshift("advantages")
+          }
         }
       }
       
@@ -55,6 +86,8 @@ function ResumeEditor({ data, onChange }) {
         },
         sectionOrder: sectionOrder,
         tags: data.tags || [],
+        reusableCapabilities: data.reusableCapabilities || [],
+        careerObjective: (typeof data.careerObjective === 'string' ? data.careerObjective : (data.careerObjective ? String(data.careerObjective) : "")),
         advantages: data.advantages || [],
         honors: data.honors || [],
         workExperiences: (() => {
@@ -188,6 +221,9 @@ function ResumeEditor({ data, onChange }) {
           [child]: value,
         },
       };
+    } else if (field === "") {
+      // 当 field 为空字符串时，直接赋值给 section（用于简单字符串字段如 careerObjective）
+      newData[section] = value;
     } else if (Array.isArray(newData[section])) {
       newData[section] = value;
     } else {
@@ -252,6 +288,9 @@ function ResumeEditor({ data, onChange }) {
 
   const sectionLabels = {
     tags: "专业标签",
+    reusableCapabilities: "可复用能力",
+    careerObjective: "求职目标",
+    advantages: "个人优势",
     education: "教育背景",
     workExperiences: "工作经历",
     honors: "荣誉证书",
@@ -287,6 +326,66 @@ function ResumeEditor({ data, onChange }) {
     }
   };
 
+  const handleNestedItemDragEnd = (section, itemIndex, nestedField, event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const items = localData[section] || [];
+      const item = items[itemIndex];
+      const nestedItems = item[nestedField] || [];
+      
+      const oldIndex = nestedItems.findIndex(
+        (_, i) => `${section}-${itemIndex}-${nestedField}-${i}` === active.id
+      );
+      const newIndex = nestedItems.findIndex(
+        (_, i) => `${section}-${itemIndex}-${nestedField}-${i}` === over.id
+      );
+      
+      const newNestedItems = arrayMove(nestedItems, oldIndex, newIndex);
+      const newItem = { ...item, [nestedField]: newNestedItems };
+      const newItems = [...items];
+      newItems[itemIndex] = newItem;
+      const newData = { ...localData, [section]: newItems };
+      setLocalData(newData);
+      onChange(newData);
+    }
+  };
+
+  const handleNestedFieldDragEnd = (parentSection, nestedField, event) => {
+    const { active, over } = event;
+    if (active.id !== over.id) {
+      const parentData = localData[parentSection] || {};
+      const nestedItems = parentData[nestedField] || [];
+      
+      const oldIndex = nestedItems.findIndex(
+        (_, i) => `${parentSection}-${nestedField}-${i}` === active.id
+      );
+      const newIndex = nestedItems.findIndex(
+        (_, i) => `${parentSection}-${nestedField}-${i}` === over.id
+      );
+      
+      const newNestedItems = arrayMove(nestedItems, oldIndex, newIndex);
+      const newParentData = { ...parentData, [nestedField]: newNestedItems };
+      const newData = { ...localData, [parentSection]: newParentData };
+      setLocalData(newData);
+      onChange(newData);
+    }
+  };
+
+  const ScrollToSection = (sectionId) => {
+    const element = document.getElementById(`section-${sectionId}`);
+    if (element) {
+      const elementTop = element.getBoundingClientRect().top;
+      const currentScrollY = window.scrollY;
+      const offset = 100; // 向下偏移100px，避免被顶部导航栏遮挡
+      const targetScrollY = currentScrollY + elementTop - offset;
+      
+      window.scrollTo({
+        top: targetScrollY,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   return (
     <div className="flex gap-6 max-w-7xl mx-auto">
       {/* 左侧目录 */}
@@ -303,7 +402,10 @@ function ResumeEditor({ data, onChange }) {
               strategy={verticalListSortingStrategy}
             >
               <div className="space-y-2">
-                <div className="text-sm font-medium text-gray-700 py-2 px-3 bg-gray-50 rounded-md">
+                <div 
+                  onClick={() => ScrollToSection('personalInfo')}
+                  className="text-sm font-medium text-gray-700 py-2 px-3 bg-gray-50 rounded-md cursor-pointer hover:bg-gray-100 transition-colors"
+                >
                   个人信息
                 </div>
                 {localData.sectionOrder?.map((sectionKey) => (
@@ -311,6 +413,7 @@ function ResumeEditor({ data, onChange }) {
                     key={sectionKey}
                     id={sectionKey}
                     label={sectionLabels[sectionKey] || sectionKey}
+                    onNavigate={() => ScrollToSection(sectionKey)}
                   />
                 ))}
               </div>
@@ -321,7 +424,7 @@ function ResumeEditor({ data, onChange }) {
 
       {/* 右侧内容 */}
       <div className="flex-1 space-y-8">
-        <Section title="个人信息">
+        <Section id="personalInfo" title="个人信息">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <InputField
               label="姓名"
@@ -368,49 +471,68 @@ function ResumeEditor({ data, onChange }) {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               作品集
             </label>
-            {localData.personalInfo.works.map((work, index) => (
-              <div key={index} className="flex gap-2 mb-2">
-                <input
-                  type="text"
-                  placeholder="作品名称"
-                  value={work.name}
-                  onChange={(e) => {
-                    const newWorks = [...localData.personalInfo.works];
-                    newWorks[index] = {
-                      ...newWorks[index],
-                      name: e.target.value,
-                    };
-                    UpdateData("personalInfo", "works", newWorks);
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <input
-                  type="text"
-                  placeholder="作品链接"
-                  value={work.url}
-                  onChange={(e) => {
-                    const newWorks = [...localData.personalInfo.works];
-                    newWorks[index] = {
-                      ...newWorks[index],
-                      url: e.target.value,
-                    };
-                    UpdateData("personalInfo", "works", newWorks);
-                  }}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <button
-                  onClick={() => {
-                    const newWorks = localData.personalInfo.works.filter(
-                      (_, i) => i !== index
-                    );
-                    UpdateData("personalInfo", "works", newWorks);
-                  }}
-                  className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-md"
-                >
-                  删除
-                </button>
-              </div>
-            ))}
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={(e) => handleNestedFieldDragEnd("personalInfo", "works", e)}
+            >
+              <SortableContext
+                items={localData.personalInfo.works.map(
+                  (_, i) => `personalInfo-works-${i}`
+                )}
+                strategy={verticalListSortingStrategy}
+              >
+                {localData.personalInfo.works.map((work, index) => (
+                  <SortableItem
+                    key={index}
+                    id={`personalInfo-works-${index}`}
+                    className="border border-gray-200 rounded-lg p-4 mb-4"
+                  >
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="作品名称"
+                        value={work.name}
+                        onChange={(e) => {
+                          const newWorks = [...localData.personalInfo.works];
+                          newWorks[index] = {
+                            ...newWorks[index],
+                            name: e.target.value,
+                          };
+                          UpdateData("personalInfo", "works", newWorks);
+                        }}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <input
+                        type="text"
+                        placeholder="作品链接"
+                        value={work.url}
+                        onChange={(e) => {
+                          const newWorks = [...localData.personalInfo.works];
+                          newWorks[index] = {
+                            ...newWorks[index],
+                            url: e.target.value,
+                          };
+                          UpdateData("personalInfo", "works", newWorks);
+                        }}
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      />
+                      <button
+                        onClick={() => {
+                          const newWorks = localData.personalInfo.works.filter(
+                            (_, i) => i !== index
+                          );
+                          UpdateData("personalInfo", "works", newWorks);
+                        }}
+                        className="px-3 py-2 text-red-600 hover:bg-red-50 rounded-md"
+                      >
+                        删除
+                      </button>
+                    </div>
+                  </SortableItem>
+                ))}
+              </SortableContext>
+            </DndContext>
             <button
               onClick={() => {
                 const newWorks = [
@@ -429,64 +551,155 @@ function ResumeEditor({ data, onChange }) {
         {localData.sectionOrder?.map((sectionKey) => {
           if (sectionKey === "tags") {
             return (
-              <Section key="tags" title="专业标签">
-                <div className="flex flex-wrap gap-2">
-                  {localData.tags.map((tag, index) => (
-                    <div key={index} className="flex items-center gap-2">
-                      <input
-                        type="text"
-                        value={tag}
-                        onChange={(e) => {
-                          const newTags = [...localData.tags];
-                          newTags[index] = e.target.value;
-                          UpdateData("tags", "", newTags);
-                        }}
-                        className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      />
+              <Section key="tags" id="tags" title="专业标签">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleItemDragEnd("tags", e)}
+                >
+                  <SortableContext
+                    items={localData.tags.map(
+                      (_, i) => `tags-item-${i}`
+                    )}
+                    strategy={rectSortingStrategy}
+                  >
+                    <div className="flex flex-wrap gap-2">
+                      {localData.tags.map((tag, index) => (
+                        <SortableTagItem
+                          key={index}
+                          id={`tags-item-${index}`}
+                          tag={tag}
+                          index={index}
+                          onTagChange={(value) => {
+                            const newTags = [...localData.tags];
+                            newTags[index] = value;
+                            UpdateData("tags", "", newTags);
+                          }}
+                          onRemove={() => RemoveItem("tags", index)}
+                        />
+                      ))}
                       <button
-                        onClick={() => RemoveItem("tags", index)}
-                        className="text-red-600 hover:bg-red-50 px-2 py-1 rounded"
+                        onClick={() => AddItem("tags", "")}
+                        className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
                       >
-                        删除
+                        + 添加标签
                       </button>
                     </div>
-                  ))}
-                  <button
-                    onClick={() => AddItem("tags", "")}
-                    className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
+                  </SortableContext>
+                </DndContext>
+              </Section>
+            );
+          }
+          if (sectionKey === "reusableCapabilities") {
+            return (
+              <Section key="reusableCapabilities" id="reusableCapabilities" title="可复用能力">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleItemDragEnd("reusableCapabilities", e)}
+                >
+                  <SortableContext
+                    items={localData.reusableCapabilities.map(
+                      (_, i) => `reusableCapabilities-item-${i}`
+                    )}
+                    strategy={verticalListSortingStrategy}
                   >
-                    + 添加标签
-                  </button>
-                </div>
+                    {localData.reusableCapabilities.map((capability, index) => (
+                      <SortableItem
+                        key={index}
+                        id={`reusableCapabilities-item-${index}`}
+                        className="border border-gray-200 rounded-lg p-4 mb-4"
+                      >
+                        <div className="flex gap-2">
+                          <textarea
+                            value={capability}
+                            onChange={(e) => {
+                              const newCapabilities = [...localData.reusableCapabilities];
+                              newCapabilities[index] = e.target.value;
+                              UpdateData("reusableCapabilities", "", newCapabilities);
+                            }}
+                            rows={2}
+                            placeholder="例如：能从零搭建企业级 RAG 检索链路（Chunking / Embedding / Hybrid / ReRank / Cache）"
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <button
+                            onClick={() => RemoveItem("reusableCapabilities", index)}
+                            className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </SortableItem>
+                    ))}
+                  </SortableContext>
+                </DndContext>
+                <button
+                  onClick={() => AddItem("reusableCapabilities", "")}
+                  className="w-full px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
+                >
+                  + 添加可复用能力
+                </button>
+              </Section>
+            );
+          }
+          if (sectionKey === "careerObjective") {
+            return (
+              <Section key="careerObjective" id="careerObjective" title="求职目标">
+                <textarea
+                  value={localData.careerObjective || ""}
+                  onChange={(e) => UpdateData("careerObjective", "", e.target.value)}
+                  rows={3}
+                  placeholder="请输入求职目标（一句话）"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
               </Section>
             );
           }
           if (sectionKey === "advantages") {
             return (
-              <Section key="advantages" title="个人优势">
-                {localData.advantages.map((advantage, index) => (
-                  <div key={index} className="flex gap-2 mb-2">
-                    <textarea
-                      value={advantage}
-                      onChange={(e) => {
-                        const newAdvantages = [...localData.advantages];
-                        newAdvantages[index] = e.target.value;
-                        UpdateData("advantages", "", newAdvantages);
-                      }}
-                      rows={3}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={() => RemoveItem("advantages", index)}
-                      className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
-                    >
-                      删除
-                    </button>
-                  </div>
-                ))}
+              <Section key="advantages" id="advantages" title="个人优势">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleItemDragEnd("advantages", e)}
+                >
+                  <SortableContext
+                    items={localData.advantages.map(
+                      (_, i) => `advantages-item-${i}`
+                    )}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {localData.advantages.map((advantage, index) => (
+                      <SortableItem
+                        key={index}
+                        id={`advantages-item-${index}`}
+                        className="border border-gray-200 rounded-lg p-4 mb-4"
+                      >
+                        <div className="flex gap-2">
+                          <textarea
+                            value={advantage}
+                            onChange={(e) => {
+                              const newAdvantages = [...localData.advantages];
+                              newAdvantages[index] = e.target.value;
+                              UpdateData("advantages", "", newAdvantages);
+                            }}
+                            rows={3}
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <button
+                            onClick={() => RemoveItem("advantages", index)}
+                            className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </SortableItem>
+                    ))}
+                  </SortableContext>
+                </DndContext>
                 <button
                   onClick={() => AddItem("advantages", "")}
-                  className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
+                  className="w-full px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
                 >
                   + 添加优势
                 </button>
@@ -495,28 +708,47 @@ function ResumeEditor({ data, onChange }) {
           }
           if (sectionKey === "honors") {
             return (
-              <Section key="honors" title="荣誉证书">
-                {localData.honors.map((honor, index) => (
-                  <div key={index} className="flex gap-2 mb-2">
-                    <input
-                      type="text"
-                      value={honor}
-                      onChange={(e) =>
-                        UpdateArrayField("honors", index, e.target.value)
-                      }
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    />
-                    <button
-                      onClick={() => RemoveItem("honors", index)}
-                      className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
-                    >
-                      删除
-                    </button>
-                  </div>
-                ))}
+              <Section key="honors" id="honors" title="荣誉证书">
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragEnd={(e) => handleItemDragEnd("honors", e)}
+                >
+                  <SortableContext
+                    items={localData.honors.map(
+                      (_, i) => `honors-item-${i}`
+                    )}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    {localData.honors.map((honor, index) => (
+                      <SortableItem
+                        key={index}
+                        id={`honors-item-${index}`}
+                        className="border border-gray-200 rounded-lg p-4 mb-4"
+                      >
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={honor}
+                            onChange={(e) =>
+                              UpdateArrayField("honors", index, e.target.value)
+                            }
+                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          />
+                          <button
+                            onClick={() => RemoveItem("honors", index)}
+                            className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                          >
+                            删除
+                          </button>
+                        </div>
+                      </SortableItem>
+                    ))}
+                  </SortableContext>
+                </DndContext>
                 <button
                   onClick={() => AddItem("honors", "")}
-                  className="px-4 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
+                  className="w-full px-4 py-2 text-blue-600 hover:bg-blue-50 rounded-md border border-dashed border-blue-300"
                 >
                   + 添加荣誉
                 </button>
@@ -525,7 +757,7 @@ function ResumeEditor({ data, onChange }) {
           }
           if (sectionKey === "workExperiences") {
             return (
-              <Section key="workExperiences" title="工作经历">
+              <Section key="workExperiences" id="workExperiences" title="工作经历">
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -851,44 +1083,63 @@ function ResumeEditor({ data, onChange }) {
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               工作业绩
                             </label>
-                            {work.achievements.map((achievement, aIndex) => (
-                              <div key={aIndex} className="flex gap-2 mb-2">
-                                <textarea
-                                  value={achievement}
-                                  onChange={(e) => {
-                                    const newWork = { ...work };
-                                    newWork.achievements[aIndex] =
-                                      e.target.value;
-                                    UpdateArrayItem(
-                                      "workExperiences",
-                                      index,
-                                      "achievements",
-                                      newWork.achievements
-                                    );
-                                  }}
-                                  rows={2}
-                                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                                <button
-                                  onClick={() => {
-                                    const newWork = { ...work };
-                                    newWork.achievements =
-                                      newWork.achievements.filter(
-                                        (_, i) => i !== aIndex
-                                      );
-                                    UpdateArrayItem(
-                                      "workExperiences",
-                                      index,
-                                      "achievements",
-                                      newWork.achievements
-                                    );
-                                  }}
-                                  className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
-                                >
-                                  删除
-                                </button>
-                              </div>
-                            ))}
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={(e) => handleNestedItemDragEnd("workExperiences", index, "achievements", e)}
+                            >
+                              <SortableContext
+                                items={work.achievements.map(
+                                  (_, i) => `workExperiences-${index}-achievements-${i}`
+                                )}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {work.achievements.map((achievement, aIndex) => (
+                                  <SortableItem
+                                    key={aIndex}
+                                    id={`workExperiences-${index}-achievements-${aIndex}`}
+                                    className="border border-gray-200 rounded-lg p-4 mb-4"
+                                  >
+                                    <div className="flex gap-2">
+                                      <textarea
+                                        value={achievement}
+                                        onChange={(e) => {
+                                          const newWork = { ...work };
+                                          newWork.achievements[aIndex] =
+                                            e.target.value;
+                                          UpdateArrayItem(
+                                            "workExperiences",
+                                            index,
+                                            "achievements",
+                                            newWork.achievements
+                                          );
+                                        }}
+                                        rows={2}
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      />
+                                      <button
+                                        onClick={() => {
+                                          const newWork = { ...work };
+                                          newWork.achievements =
+                                            newWork.achievements.filter(
+                                              (_, i) => i !== aIndex
+                                            );
+                                          UpdateArrayItem(
+                                            "workExperiences",
+                                            index,
+                                            "achievements",
+                                            newWork.achievements
+                                          );
+                                        }}
+                                        className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                                      >
+                                        删除
+                                      </button>
+                                    </div>
+                                  </SortableItem>
+                                ))}
+                              </SortableContext>
+                            </DndContext>
                             <button
                               onClick={() => {
                                 const newWork = { ...work };
@@ -912,46 +1163,65 @@ function ResumeEditor({ data, onChange }) {
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               工作内容
                             </label>
-                            {work.responsibilities.map(
-                              (responsibility, rIndex) => (
-                                <div key={rIndex} className="flex gap-2 mb-2">
-                                  <textarea
-                                    value={responsibility}
-                                    onChange={(e) => {
-                                      const newWork = { ...work };
-                                      newWork.responsibilities[rIndex] =
-                                        e.target.value;
-                                      UpdateArrayItem(
-                                        "workExperiences",
-                                        index,
-                                        "responsibilities",
-                                        newWork.responsibilities
-                                      );
-                                    }}
-                                    rows={2}
-                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  />
-                                  <button
-                                    onClick={() => {
-                                      const newWork = { ...work };
-                                      newWork.responsibilities =
-                                        newWork.responsibilities.filter(
-                                          (_, i) => i !== rIndex
-                                        );
-                                      UpdateArrayItem(
-                                        "workExperiences",
-                                        index,
-                                        "responsibilities",
-                                        newWork.responsibilities
-                                      );
-                                    }}
-                                    className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
-                                  >
-                                    删除
-                                  </button>
-                                </div>
-                              )
-                            )}
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={(e) => handleNestedItemDragEnd("workExperiences", index, "responsibilities", e)}
+                            >
+                              <SortableContext
+                                items={work.responsibilities.map(
+                                  (_, i) => `workExperiences-${index}-responsibilities-${i}`
+                                )}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {work.responsibilities.map(
+                                  (responsibility, rIndex) => (
+                                    <SortableItem
+                                      key={rIndex}
+                                      id={`workExperiences-${index}-responsibilities-${rIndex}`}
+                                      className="border border-gray-200 rounded-lg p-4 mb-4"
+                                    >
+                                      <div className="flex gap-2">
+                                        <textarea
+                                          value={responsibility}
+                                          onChange={(e) => {
+                                            const newWork = { ...work };
+                                            newWork.responsibilities[rIndex] =
+                                              e.target.value;
+                                            UpdateArrayItem(
+                                              "workExperiences",
+                                              index,
+                                              "responsibilities",
+                                              newWork.responsibilities
+                                            );
+                                          }}
+                                          rows={2}
+                                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        />
+                                        <button
+                                          onClick={() => {
+                                            const newWork = { ...work };
+                                            newWork.responsibilities =
+                                              newWork.responsibilities.filter(
+                                                (_, i) => i !== rIndex
+                                              );
+                                            UpdateArrayItem(
+                                              "workExperiences",
+                                              index,
+                                              "responsibilities",
+                                              newWork.responsibilities
+                                            );
+                                          }}
+                                          className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                                        >
+                                          删除
+                                        </button>
+                                      </div>
+                                    </SortableItem>
+                                  )
+                                )}
+                              </SortableContext>
+                            </DndContext>
                             <button
                               onClick={() => {
                                 const newWork = { ...work };
@@ -1010,7 +1280,7 @@ function ResumeEditor({ data, onChange }) {
           }
           if (sectionKey === "projects") {
             return (
-              <Section key="projects" title="项目经历">
+              <Section key="projects" id="projects" title="项目经历">
                 <DndContext
                   sensors={sensors}
                   collisionDetection={closestCenter}
@@ -1278,44 +1548,63 @@ function ResumeEditor({ data, onChange }) {
                             <label className="block text-sm font-medium text-gray-700 mb-2">
                               项目描述
                             </label>
-                            {project.description.map((desc, dIndex) => (
-                              <div key={dIndex} className="flex gap-2 mb-2">
-                                <textarea
-                                  value={desc}
-                                  onChange={(e) => {
-                                    const newProject = { ...project };
-                                    newProject.description[dIndex] =
-                                      e.target.value;
-                                    UpdateArrayItem(
-                                      "projects",
-                                      index,
-                                      "description",
-                                      newProject.description
-                                    );
-                                  }}
-                                  rows={3}
-                                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                />
-                                <button
-                                  onClick={() => {
-                                    const newProject = { ...project };
-                                    newProject.description =
-                                      newProject.description.filter(
-                                        (_, i) => i !== dIndex
-                                      );
-                                    UpdateArrayItem(
-                                      "projects",
-                                      index,
-                                      "description",
-                                      newProject.description
-                                    );
-                                  }}
-                                  className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
-                                >
-                                  删除
-                                </button>
-                              </div>
-                            ))}
+                            <DndContext
+                              sensors={sensors}
+                              collisionDetection={closestCenter}
+                              onDragEnd={(e) => handleNestedItemDragEnd("projects", index, "description", e)}
+                            >
+                              <SortableContext
+                                items={project.description.map(
+                                  (_, i) => `projects-${index}-description-${i}`
+                                )}
+                                strategy={verticalListSortingStrategy}
+                              >
+                                {project.description.map((desc, dIndex) => (
+                                  <SortableItem
+                                    key={dIndex}
+                                    id={`projects-${index}-description-${dIndex}`}
+                                    className="border border-gray-200 rounded-lg p-4 mb-4"
+                                  >
+                                    <div className="flex gap-2">
+                                      <textarea
+                                        value={desc}
+                                        onChange={(e) => {
+                                          const newProject = { ...project };
+                                          newProject.description[dIndex] =
+                                            e.target.value;
+                                          UpdateArrayItem(
+                                            "projects",
+                                            index,
+                                            "description",
+                                            newProject.description
+                                          );
+                                        }}
+                                        rows={3}
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      />
+                                      <button
+                                        onClick={() => {
+                                          const newProject = { ...project };
+                                          newProject.description =
+                                            newProject.description.filter(
+                                              (_, i) => i !== dIndex
+                                            );
+                                          UpdateArrayItem(
+                                            "projects",
+                                            index,
+                                            "description",
+                                            newProject.description
+                                          );
+                                        }}
+                                        className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                                      >
+                                        删除
+                                      </button>
+                                    </div>
+                                  </SortableItem>
+                                ))}
+                              </SortableContext>
+                            </DndContext>
                             <button
                               onClick={() => {
                                 const newProject = { ...project };
@@ -1369,7 +1658,7 @@ function ResumeEditor({ data, onChange }) {
           }
           if (sectionKey === "education") {
             return (
-              <Section key="education" title="教育背景">
+              <Section key="education" id="education" title="教育背景">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <InputField
                     label="学校名称"
@@ -1739,43 +2028,62 @@ function ResumeEditor({ data, onChange }) {
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     在校成就
                   </label>
-                  {localData.education.achievements.map(
-                    (achievement, index) => (
-                      <div key={index} className="flex gap-2 mb-2">
-                        <textarea
-                          value={achievement}
-                          onChange={(e) => {
-                            const newEducation = { ...localData.education };
-                            newEducation.achievements[index] = e.target.value;
-                            UpdateData(
-                              "education",
-                              "achievements",
-                              newEducation.achievements
-                            );
-                          }}
-                          rows={2}
-                          className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <button
-                          onClick={() => {
-                            const newEducation = { ...localData.education };
-                            newEducation.achievements =
-                              newEducation.achievements.filter(
-                                (_, i) => i !== index
-                              );
-                            UpdateData(
-                              "education",
-                              "achievements",
-                              newEducation.achievements
-                            );
-                          }}
-                          className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
-                        >
-                          删除
-                        </button>
-                      </div>
-                    )
-                  )}
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={(e) => handleNestedFieldDragEnd("education", "achievements", e)}
+                  >
+                    <SortableContext
+                      items={localData.education.achievements.map(
+                        (_, i) => `education-achievements-${i}`
+                      )}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {localData.education.achievements.map(
+                        (achievement, index) => (
+                          <SortableItem
+                            key={index}
+                            id={`education-achievements-${index}`}
+                            className="border border-gray-200 rounded-lg p-4 mb-4"
+                          >
+                            <div className="flex gap-2">
+                              <textarea
+                                value={achievement}
+                                onChange={(e) => {
+                                  const newEducation = { ...localData.education };
+                                  newEducation.achievements[index] = e.target.value;
+                                  UpdateData(
+                                    "education",
+                                    "achievements",
+                                    newEducation.achievements
+                                  );
+                                }}
+                                rows={2}
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                              <button
+                                onClick={() => {
+                                  const newEducation = { ...localData.education };
+                                  newEducation.achievements =
+                                    newEducation.achievements.filter(
+                                      (_, i) => i !== index
+                                    );
+                                  UpdateData(
+                                    "education",
+                                    "achievements",
+                                    newEducation.achievements
+                                  );
+                                }}
+                                className="text-red-600 hover:bg-red-50 px-3 py-2 rounded"
+                              >
+                                删除
+                              </button>
+                            </div>
+                          </SortableItem>
+                        )
+                      )}
+                    </SortableContext>
+                  </DndContext>
                   <button
                     onClick={() => {
                       const newEducation = { ...localData.education };
@@ -1804,7 +2112,7 @@ function ResumeEditor({ data, onChange }) {
   );
 }
 
-function SortableSectionItem({ id, label }) {
+function SortableSectionItem({ id, label, onNavigate }) {
   const {
     attributes,
     listeners,
@@ -1820,29 +2128,49 @@ function SortableSectionItem({ id, label }) {
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const HandleClick = (e) => {
+    // 如果点击的是拖拽图标，不触发导航
+    if (e.target.closest('svg') || e.target.closest('[data-drag-handle]')) {
+      return;
+    }
+    if (onNavigate) {
+      onNavigate();
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
       style={style}
       {...attributes}
-      {...listeners}
-      className="text-sm text-gray-700 py-2 px-3 bg-white border border-gray-200 rounded-md cursor-move hover:bg-gray-50 hover:border-blue-300 transition-colors"
+      className="text-sm text-gray-700 py-2 px-3 bg-white border border-gray-200 rounded-md hover:bg-gray-50 hover:border-blue-300 transition-colors"
     >
       <div className="flex items-center gap-2">
-        <svg
-          className="w-4 h-4 text-gray-400"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
+        <div
+          {...listeners}
+          data-drag-handle
+          className="cursor-move flex items-center"
         >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 8h16M4 16h16"
-          />
-        </svg>
-        {label}
+          <svg
+            className="w-4 h-4 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M4 8h16M4 16h16"
+            />
+          </svg>
+        </div>
+        <div 
+          onClick={HandleClick}
+          className="flex-1 cursor-pointer"
+        >
+          {label}
+        </div>
       </div>
     </div>
   );
@@ -1892,11 +2220,71 @@ function SortableItem({ id, children, className = "" }) {
   );
 }
 
-function Section({ title, children }) {
+function Section({ id, title, children }) {
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+    <div id={id ? `section-${id}` : undefined} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
       <h2 className="text-xl font-semibold text-gray-900 mb-4">{title}</h2>
       {children}
+    </div>
+  );
+}
+
+function SortableTagItem({ id, tag, index, onTagChange, onRemove }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    cursor: isDragging ? "grabbing" : "grab",
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className="flex items-center gap-2 bg-white border border-gray-300 rounded-md hover:border-blue-400 transition-colors"
+    >
+      <div
+        {...attributes}
+        {...listeners}
+        className="px-2 py-1 cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600 flex items-center"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 8h16M4 16h16"
+          />
+        </svg>
+      </div>
+      <input
+        type="text"
+        value={tag}
+        onChange={(e) => onTagChange(e.target.value)}
+        className="px-3 py-2 border-0 focus:outline-none focus:ring-0 bg-transparent flex-1 min-w-[120px]"
+        placeholder="标签名称"
+      />
+      <button
+        onClick={onRemove}
+        className="text-red-600 hover:bg-red-50 px-2 py-1 rounded mr-1"
+        type="button"
+      >
+        删除
+      </button>
     </div>
   );
 }

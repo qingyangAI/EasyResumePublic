@@ -6,7 +6,10 @@ function ResumePreview({ data, style }) {
 
   useEffect(() => {
     if (style) {
-      const fontFamily = style.fontFamily === 'inherit' ? 'inherit' : style.fontFamily
+      // 如果用户选择"默认字体"（inherit），使用思源黑体
+      const fontFamily = style.fontFamily === 'inherit' 
+        ? "'Source Han Sans SC', 'Microsoft YaHei', '微软雅黑', 'SimHei', '黑体', sans-serif"
+        : style.fontFamily
       const titleTitleFontSize = style.titleTitleFontSize || style.titleFontSize || 24
       const vars = {
         '--resume-font-family': fontFamily,
@@ -23,11 +26,17 @@ function ResumePreview({ data, style }) {
       }
       setStyleVars(vars)
     } else {
-      setStyleVars({})
+      // 默认也使用思源黑体
+      setStyleVars({
+        '--resume-font-family': "'Source Han Sans SC', 'Microsoft YaHei', '微软雅黑', 'SimHei', '黑体', sans-serif",
+        fontFamily: "'Source Han Sans SC', 'Microsoft YaHei', '微软雅黑', 'SimHei', '黑体', sans-serif"
+      })
     }
   }, [style])
   const [showEmptySections, setShowEmptySections] = useState({
     tags: false,
+    reusableCapabilities: false,
+    careerObjective: false,
     advantages: false,
     honors: false,
     workExperiences: false,
@@ -47,6 +56,8 @@ function ResumePreview({ data, style }) {
     )
     
     const hasTags = data.tags && data.tags.some(tag => tag && tag.trim())
+    const hasReusableCapabilities = data.reusableCapabilities && data.reusableCapabilities.some(c => c && c.trim())
+    const hasCareerObjective = data.careerObjective && typeof data.careerObjective === 'string' && data.careerObjective.trim()
     const hasAdvantages = data.advantages && data.advantages.some(a => a && a.trim())
     const hasHonors = data.honors && data.honors.some(h => h && h.trim())
     const hasWorkExp = data.workExperiences && data.workExperiences.length > 0
@@ -57,13 +68,17 @@ function ResumePreview({ data, style }) {
       (data.education.degree && data.education.degree.trim())
     )
     
-    return hasPersonalInfo || hasTags || hasAdvantages || hasHonors || hasWorkExp || hasProjects || hasEducation
+    return hasPersonalInfo || hasTags || hasReusableCapabilities || hasCareerObjective || hasAdvantages || hasHonors || hasWorkExp || hasProjects || hasEducation
   }
 
   const HasSectionData = (section) => {
     switch (section) {
       case 'tags':
         return data.tags && data.tags.some(tag => tag && tag.trim())
+      case 'reusableCapabilities':
+        return data.reusableCapabilities && data.reusableCapabilities.some(c => c && c.trim())
+      case 'careerObjective':
+        return data.careerObjective && typeof data.careerObjective === 'string' && data.careerObjective.trim()
       case 'advantages':
         return data.advantages && data.advantages.some(a => a && a.trim())
       case 'honors':
@@ -95,6 +110,8 @@ function ResumePreview({ data, style }) {
 
   const sectionConfigs = [
     { key: 'tags', label: '专业标签' },
+    { key: 'reusableCapabilities', label: '可复用能力' },
+    { key: 'careerObjective', label: '求职目标' },
     { key: 'advantages', label: '个人优势' },
     { key: 'honors', label: '荣誉证书' },
     { key: 'workExperiences', label: '工作经历' },
@@ -104,12 +121,125 @@ function ResumePreview({ data, style }) {
 
   const emptySections = sectionConfigs.filter(config => !HasSectionData(config.key))
 
+  // 检查是否有页眉或页脚内容
+  const hasHeader = style?.headerText || style?.headerUrl
+  const hasFooter = style?.footerText || style?.footerUrl
+
   return (
-    <div 
-      id="resume-preview" 
-      className="bg-white shadow-lg rounded-lg p-8 max-w-6xl mx-auto print:shadow-none print:p-0"
-      style={styleVars}
-    >
+    <>
+      {/* 打印样式：页眉页脚 */}
+      {hasHeader || hasFooter ? (
+        <style>{`
+          @page {
+            margin-top: ${hasHeader ? '60px' : '0'};
+            margin-bottom: ${hasFooter ? '60px' : '0'};
+          }
+          @media print {
+            .print-header {
+              position: fixed;
+              top: 0;
+              left: 0;
+              right: 0;
+              height: 50px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 12px;
+              color: #666;
+              border-bottom: 1px solid #e5e7eb;
+              background: white;
+              z-index: 1000;
+            }
+            .print-footer {
+              position: fixed;
+              bottom: 0;
+              left: 0;
+              right: 0;
+              height: 50px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 12px;
+              color: #666;
+              border-top: 1px solid #e5e7eb;
+              background: white;
+              z-index: 1000;
+            }
+            .print-header a,
+            .print-footer a {
+              color: #2563eb;
+              text-decoration: underline;
+            }
+            /* 打印时显示链接URL */
+            @media print {
+              .print-header a::after,
+              .print-footer a::after {
+                content: ' (' attr(href) ')';
+                font-size: 10px;
+                color: #666;
+                text-decoration: none;
+              }
+            }
+          }
+          @media screen {
+            .print-header,
+            .print-footer {
+              display: none;
+            }
+          }
+        `}</style>
+      ) : null}
+
+      {/* 页眉 */}
+      {hasHeader ? (
+        <div className="print-header">
+          {style.headerUrl ? (
+            <>
+              {style.headerText ? (
+                <a href={style.headerUrl} target="_blank" rel="noopener noreferrer">
+                  {style.headerText}
+                </a>
+              ) : (
+                <a href={style.headerUrl} target="_blank" rel="noopener noreferrer">
+                  {style.headerUrl}
+                </a>
+              )}
+            </>
+          ) : (
+            <span>{style.headerText}</span>
+          )}
+        </div>
+      ) : null}
+
+      {/* 页脚 */}
+      {hasFooter ? (
+        <div className="print-footer">
+          {style.footerUrl ? (
+            <>
+              {style.footerText ? (
+                <a href={style.footerUrl} target="_blank" rel="noopener noreferrer">
+                  {style.footerText}
+                </a>
+              ) : (
+                <a href={style.footerUrl} target="_blank" rel="noopener noreferrer">
+                  {style.footerUrl}
+                </a>
+              )}
+            </>
+          ) : (
+            <span>{style.footerText}</span>
+          )}
+        </div>
+      ) : null}
+
+      <div 
+        id="resume-preview" 
+        className="shadow-lg rounded-lg p-8 max-w-6xl mx-auto print:shadow-none print:p-0 print:rounded-none print:border-0"
+        style={{
+          ...styleVars,
+          backgroundColor: style?.resumeBackgroundColor || '#ffffff'
+        }}
+      >
       {hasAnyData && emptySections.length > 0 && (
         <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-md no-print">
           <div className="text-sm text-gray-700 mb-2">显示空模块：</div>
@@ -134,18 +264,64 @@ function ResumePreview({ data, style }) {
       <PersonalInfoSection data={data.personalInfo} />
       
       {(() => {
-        // 确保sectionOrder包含advantages，兼容旧数据
-        const defaultOrder = ['tags', 'advantages', 'education', 'workExperiences', 'honors', 'projects']
+        // 确保sectionOrder包含所有必要的section，兼容旧数据
+        const defaultOrder = ['tags', 'reusableCapabilities', 'careerObjective', 'advantages', 'education', 'workExperiences', 'honors', 'projects']
         let sectionOrder = data.sectionOrder || [...defaultOrder]
         
-        // 如果旧数据中没有advantages，添加到合适的位置（在tags之后）
-        if (!sectionOrder.includes('advantages')) {
+        // 如果旧数据中没有reusableCapabilities，添加到合适的位置（在tags之后）
+        if (!sectionOrder.includes('reusableCapabilities')) {
           const tagsIndex = sectionOrder.indexOf('tags')
           if (tagsIndex >= 0) {
             sectionOrder = [...sectionOrder]
-            sectionOrder.splice(tagsIndex + 1, 0, 'advantages')
+            sectionOrder.splice(tagsIndex + 1, 0, 'reusableCapabilities')
           } else {
-            sectionOrder = ['advantages', ...sectionOrder]
+            sectionOrder = ['reusableCapabilities', ...sectionOrder]
+          }
+        }
+        
+        // 如果旧数据中没有careerObjective，添加到合适的位置（在advantages之前）
+        if (!sectionOrder.includes('careerObjective')) {
+          const advantagesIndex = sectionOrder.indexOf('advantages')
+          if (advantagesIndex >= 0) {
+            sectionOrder = [...sectionOrder]
+            sectionOrder.splice(advantagesIndex, 0, 'careerObjective')
+          } else {
+            const reusableCapabilitiesIndex = sectionOrder.indexOf('reusableCapabilities')
+            if (reusableCapabilitiesIndex >= 0) {
+              sectionOrder = [...sectionOrder]
+              sectionOrder.splice(reusableCapabilitiesIndex + 1, 0, 'careerObjective')
+            } else {
+              const tagsIndex = sectionOrder.indexOf('tags')
+              if (tagsIndex >= 0) {
+                sectionOrder = [...sectionOrder]
+                sectionOrder.splice(tagsIndex + 1, 0, 'careerObjective')
+              } else {
+                sectionOrder = ['careerObjective', ...sectionOrder]
+              }
+            }
+          }
+        }
+        
+        // 如果旧数据中没有advantages，添加到合适的位置（在careerObjective之后）
+        if (!sectionOrder.includes('advantages')) {
+          const careerObjectiveIndex = sectionOrder.indexOf('careerObjective')
+          if (careerObjectiveIndex >= 0) {
+            sectionOrder = [...sectionOrder]
+            sectionOrder.splice(careerObjectiveIndex + 1, 0, 'advantages')
+          } else {
+            const reusableCapabilitiesIndex = sectionOrder.indexOf('reusableCapabilities')
+            if (reusableCapabilitiesIndex >= 0) {
+              sectionOrder = [...sectionOrder]
+              sectionOrder.splice(reusableCapabilitiesIndex + 1, 0, 'advantages')
+            } else {
+              const tagsIndex = sectionOrder.indexOf('tags')
+              if (tagsIndex >= 0) {
+                sectionOrder = [...sectionOrder]
+                sectionOrder.splice(tagsIndex + 1, 0, 'advantages')
+              } else {
+                sectionOrder = ['advantages', ...sectionOrder]
+              }
+            }
           }
         }
         
@@ -161,12 +337,33 @@ function ResumePreview({ data, style }) {
             />
           )
         }
+        if (sectionKey === 'reusableCapabilities' && (showAll || HasSectionData('reusableCapabilities') || showEmptySections.reusableCapabilities)) {
+          return (
+            <ReusableCapabilitiesSection 
+              key="reusableCapabilities"
+              capabilities={data.reusableCapabilities}
+              isEmpty={!HasSectionData('reusableCapabilities')}
+              style={style}
+            />
+          )
+        }
+        if (sectionKey === 'careerObjective' && (showAll || HasSectionData('careerObjective') || showEmptySections.careerObjective)) {
+          return (
+            <CareerObjectiveSection 
+              key="careerObjective"
+              careerObjective={data.careerObjective}
+              isEmpty={!HasSectionData('careerObjective')}
+              style={style}
+            />
+          )
+        }
         if (sectionKey === 'advantages' && (showAll || HasSectionData('advantages') || showEmptySections.advantages)) {
           return (
             <AdvantagesSection 
               key="advantages"
               advantages={data.advantages}
               isEmpty={!HasSectionData('advantages')}
+              style={style}
             />
           )
         }
@@ -176,6 +373,7 @@ function ResumePreview({ data, style }) {
               key="honors"
               honors={data.honors}
               isEmpty={!HasSectionData('honors')}
+              style={style}
             />
           )
         }
@@ -211,25 +409,30 @@ function ResumePreview({ data, style }) {
         }
         return null
       })}
-    </div>
+      </div>
+    </>
   )
 }
 
 function PersonalInfoSection({ data }) {
   if (!data) {
     return (
-      <div className="mb-6" style={{ fontFamily: 'var(--resume-font-family, inherit)' }}>
-        <div className="mb-2">
-          <div className="relative flex items-center mb-2" style={{ fontFamily: 'var(--resume-font-family, inherit)' }}>
-            <h1 className="text-3xl font-bold text-gray-900" style={{ fontFamily: 'var(--resume-font-family, inherit)' }}>
+      <div className="mb-6" style={{ fontSize: 'var(--resume-font-size, 14px)', lineHeight: 'var(--resume-line-height, 1.6)', color: 'var(--resume-text-color, #1f2937)', marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+        {/* 姓名和职位在同一行 */}
+        <div className="flex items-start justify-between gap-4 w-full mb-2">
+          <div className="flex-shrink-0">
+            <div className="font-bold" style={{ fontSize: 'var(--resume-title-font-size, 24px)', color: 'var(--resume-title-color, #111827)', fontFamily: 'var(--resume-font-family, inherit)' }}>
               （姓名）
-            </h1>
-            <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2" style={{ fontSize: 'var(--resume-title-title-font-size, var(--resume-title-font-size, 24px))', fontFamily: 'var(--resume-font-family, inherit)' }}>
-              <span className="font-normal text-gray-700">（职位）</span>
             </div>
           </div>
+          <div className="flex-shrink-0">
+            <div style={{ fontSize: 'var(--resume-title-title-font-size, var(--resume-title-font-size, 24px))', color: 'var(--resume-text-color, #1f2937)', fontFamily: 'var(--resume-font-family, inherit)' }}>
+              <span className="font-normal">（职位）</span>
+            </div>
+          </div>
+          <div className="flex-shrink-0"></div>
         </div>
-        <div className="text-sm text-gray-400 italic mb-4" style={{ fontFamily: 'var(--resume-font-family, inherit)' }}>（暂无联系信息）</div>
+        <div className="italic mb-4" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>（暂无联系信息）</div>
         <div className="border-b border-gray-300 my-4"></div>
       </div>
     )
@@ -267,27 +470,59 @@ function PersonalInfoSection({ data }) {
     columns[index % 3].push(item)
   })
   
+  // 计算每列的最大宽度
+  const columnWidths = columns.map(column => {
+    const maxLength = column.reduce((max, item) => Math.max(max, item ? item.length : 0), 0)
+    return maxLength * 0.6
+  })
+  
+  // 计算职位文本宽度，用于确定中间列宽度
+  const titleText = data.title && data.title.trim() ? data.title : '（职位）'
+  const titleWidth = titleText.length * 0.6
+  
+  // 计算中间列的最大宽度（包括职位和联系信息）
+  const middleColumnWidth = Math.max(columnWidths[1], titleWidth)
+  
   return (
     <div className="mb-6" style={{ fontSize: 'var(--resume-font-size, 14px)', lineHeight: 'var(--resume-line-height, 1.6)', color: 'var(--resume-text-color, #1f2937)', marginBottom: 'var(--resume-spacing, 1.5em)' }}>
-      <div className="mb-2">
-        <div className="relative flex items-center mb-2" style={{ fontFamily: 'var(--resume-font-family, inherit)' }}>
+      {/* 姓名和职位在同一行，使用三列布局 */}
+      <div className="flex items-start justify-between gap-4 w-full mb-2">
+        {/* 左列 - 姓名 */}
+        <div className="flex-shrink-0" style={{ minWidth: `${columnWidths[0]}em` }}>
           <div className="font-bold" style={{ fontSize: 'var(--resume-title-font-size, 24px)', color: 'var(--resume-title-color, #111827)', fontFamily: 'var(--resume-font-family, inherit)' }}>
             {data.name && data.name.trim() ? data.name : '（姓名）'}
           </div>
-          <div className="absolute left-1/2 transform -translate-x-1/2 flex items-center gap-2" style={{ fontSize: 'var(--resume-title-title-font-size, var(--resume-title-font-size, 24px))', color: 'var(--resume-text-color, #1f2937)', fontFamily: 'var(--resume-font-family, inherit)' }}>
-            <span className="font-normal">{data.title && data.title.trim() ? data.title : '（职位）'}</span>
+        </div>
+        {/* 中间列 - 职位 */}
+        <div className="flex-shrink-0" style={{ minWidth: `${middleColumnWidth}em` }}>
+          <div style={{ fontSize: 'var(--resume-title-title-font-size, var(--resume-title-font-size, 24px))', color: 'var(--resume-text-color, #1f2937)', fontFamily: 'var(--resume-font-family, inherit)' }}>
+            <span className="font-normal">{titleText}</span>
           </div>
         </div>
+        {/* 右列 - 空 */}
+        <div className="flex-shrink-0" style={{ minWidth: `${columnWidths[2]}em` }}></div>
       </div>
+      {/* 联系信息使用相同的三列布局 */}
       {allItems.length > 0 ? (
         <div className="flex items-start justify-between gap-4 w-full">
-          {columns.map((column, colIndex) => (
-            <div key={colIndex} className="flex-1 space-y-1">
-              {column.map((item, itemIndex) => (
-                <div key={itemIndex} className="text-left" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
-              ))}
-            </div>
-          ))}
+          {/* 左列 */}
+          <div className="flex-shrink-0 space-y-1" style={{ minWidth: `${columnWidths[0]}em` }}>
+            {columns[0].map((item, itemIndex) => (
+              <div key={itemIndex} className="text-left whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
+            ))}
+          </div>
+          {/* 中间列 - 联系信息 */}
+          <div className="flex-shrink-0 space-y-1" style={{ minWidth: `${middleColumnWidth}em` }}>
+            {columns[1].map((item, itemIndex) => (
+              <div key={itemIndex} className="text-left whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
+            ))}
+          </div>
+          {/* 右列 */}
+          <div className="flex-shrink-0 space-y-1" style={{ minWidth: `${columnWidths[2]}em` }}>
+            {columns[2].map((item, itemIndex) => (
+              <div key={itemIndex} className="text-left whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
+            ))}
+          </div>
         </div>
       ) : (
         <div className="italic mb-4" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>（暂无联系信息）</div>
@@ -295,6 +530,20 @@ function PersonalInfoSection({ data }) {
       <div className="border-b border-gray-300 my-4"></div>
     </div>
   )
+}
+
+// 获取章节样式
+const GetSectionStyle = (style) => {
+  const baseStyle = { marginBottom: 'var(--resume-spacing, 1.5em)' }
+  if (style?.useSectionBackground && style?.sectionBackgroundColor) {
+    return {
+      ...baseStyle,
+      backgroundColor: style.sectionBackgroundColor,
+      padding: '1em',
+      borderRadius: '4px'
+    }
+  }
+  return baseStyle
 }
 
 function TagsSection({ tags, isEmpty, style }) {
@@ -418,19 +667,55 @@ function TagsSection({ tags, isEmpty, style }) {
   }
   
   return (
-    <div className="mb-6" style={{ marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+    <div className="mb-6" style={GetSectionStyle(style)}>
       <h2 className="font-semibold mb-2" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>专业标签</h2>
       {RenderTags()}
     </div>
   )
 }
 
-function AdvantagesSection({ advantages, isEmpty }) {
+function CareerObjectiveSection({ careerObjective, isEmpty, style }) {
+  const validCareerObjective = (careerObjective && typeof careerObjective === 'string' && careerObjective.trim()) ? careerObjective : ''
+  return (
+    <div className="mb-6" style={GetSectionStyle(style)}>
+      <h2 className="font-semibold mb-2" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>求职目标</h2>
+      {validCareerObjective ? (
+        <div style={{ fontSize: 'var(--resume-font-size, 14px)', lineHeight: 'var(--resume-line-height, 1.6)', fontFamily: 'var(--resume-font-family, inherit)' }}>
+          {validCareerObjective}
+        </div>
+      ) : (
+        <div className="italic" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>（暂无）</div>
+      )}
+    </div>
+  )
+}
+
+function ReusableCapabilitiesSection({ capabilities, isEmpty, style }) {
+  const validCapabilities = capabilities && capabilities.length > 0 
+    ? capabilities.filter(c => c && c.trim()) 
+    : []
+  return (
+    <div className="mb-6" style={GetSectionStyle(style)}>
+      <h2 className="font-semibold mb-2" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>可复用能力</h2>
+      {validCapabilities.length > 0 ? (
+        validCapabilities.map((capability, index) => (
+          <div key={index} className="mb-1" style={{ fontSize: 'var(--resume-font-size, 14px)', lineHeight: 'var(--resume-line-height, 1.6)', fontFamily: 'var(--resume-font-family, inherit)' }}>
+            {index + 1}、{capability}
+          </div>
+        ))
+      ) : (
+        <div className="italic" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>（暂无）</div>
+      )}
+    </div>
+  )
+}
+
+function AdvantagesSection({ advantages, isEmpty, style }) {
   const validAdvantages = advantages && advantages.length > 0 
     ? advantages.filter(a => a && a.trim()) 
     : []
   return (
-    <div className="mb-6" style={{ marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+    <div className="mb-6" style={GetSectionStyle(style)}>
       <h2 className="font-semibold mb-2" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>个人优势</h2>
       {validAdvantages.length > 0 ? (
         validAdvantages.map((advantage, index) => (
@@ -445,10 +730,10 @@ function AdvantagesSection({ advantages, isEmpty }) {
   )
 }
 
-function HonorsSection({ honors, isEmpty }) {
+function HonorsSection({ honors, isEmpty, style }) {
   const validHonors = honors && honors.length > 0 ? honors.filter(h => h && h.trim()) : []
   return (
-    <div className="mb-6" style={{ marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+    <div className="mb-6" style={GetSectionStyle(style)}>
       <h2 className="font-semibold mb-2" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>荣誉证书</h2>
       {validHonors.length > 0 ? (
         <div style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>
@@ -469,7 +754,7 @@ function WorkExperiencesSection({ experiences, isEmpty, style }) {
   const validExperiences = experiences && experiences.length > 0 ? experiences : []
   const dateFormat = style?.dateFormat || 'dot'
   return (
-    <div className="mb-6" style={{ marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+    <div className="mb-6" style={GetSectionStyle(style)}>
       <h2 className="font-semibold mb-4" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>工作经历</h2>
       {validExperiences.length > 0 ? (
         validExperiences.map((exp, index) => (
@@ -532,7 +817,7 @@ function ProjectsSection({ projects, isEmpty, style }) {
   const validProjects = projects && projects.length > 0 ? projects : []
   const dateFormat = style?.dateFormat || 'dot'
   return (
-    <div className="mb-6" style={{ marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+    <div className="mb-6" style={GetSectionStyle(style)}>
       <h2 className="font-semibold mb-4" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>项目经历</h2>
       {validProjects.length > 0 ? (
         validProjects.map((project, index) => (
@@ -634,7 +919,7 @@ function EducationSection({ education, isEmpty, style }) {
   }
   
   return (
-    <div className="mb-6" style={{ marginBottom: 'var(--resume-spacing, 1.5em)' }}>
+    <div className="mb-6" style={GetSectionStyle(style)}>
       <h2 className="font-semibold mb-4" style={{ fontSize: 'var(--resume-section-title-font-size, 18px)', color: 'var(--resume-section-title-color, #374151)', fontFamily: 'var(--resume-font-family, inherit)' }}>教育背景</h2>
       {hasEducationData ? (
         <>

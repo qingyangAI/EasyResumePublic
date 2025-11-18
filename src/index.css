@@ -2,6 +2,536 @@
 @tailwind components;
 @tailwind utilities;
 
+/* 加载思源黑体字体 */
+@font-face {
+  font-family: 'Source Han Sans SC';
+  src: url('/fonts/SourceHanSansSC-VF.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载阿里巴巴普惠体字体 */
+@font-face {
+  font-family: 'Alibaba PuHuiTi';
+  src: url('/fonts/AlibabaPuHuiTi-3-45-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载阿里妈妈刀隶体字体 */
+@font-face {
+  font-family: 'Alimama DaoLiTi';
+  src: url('/fonts/AlimamaDaoLiTi-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载钉钉进步体字体 */
+@font-face {
+  font-family: 'DingTalk JinBuTi';
+  src: url('/fonts/DingTalkJinBuTi-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载阿里妈妈东方大楷字体 */
+@font-face {
+  font-family: 'Alimama DongFangDaKai';
+  src: url('/fonts/Alimama_DongFangDaKai_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载阿里妈妈数黑体字体 */
+@font-face {
+  font-family: 'Alimama ShuHeiTi';
+  src: url('/fonts/AlimamaShuHeiTi-bold/AlimamaShuHeiTi-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载阿里妈妈方圆体字体 */
+@font-face {
+  font-family: 'Alimama FangYuanTi';
+  src: url('/fonts/AlimamaFangYuanTiVF-Thin/AlimamaFangYuanTiVF-Thin.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载淘宝买菜体字体 */
+@font-face {
+  font-family: 'TaoBao MaiCaiTi';
+  src: url('/fonts/TaoBaoMaiCaiTi-Regular/TaoBaoMaiCaiTi-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载阿里妈妈灵动体字体 */
+@font-face {
+  font-family: 'Alimama Agile';
+  src: url('/fonts/AlimamaAgileVF-Thin/AlimamaAgileVF-Thin.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜文楷字体 */
+@font-face {
+  font-family: 'LXGW WenKai';
+  src: url('/fonts/LxgwWenKai/LXGWWenKai-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai';
+  src: url('/fonts/LxgwWenKai/LXGWWenKai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai';
+  src: url('/fonts/LxgwWenKai/LXGWWenKai-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜文楷等宽字体 */
+@font-face {
+  font-family: 'LXGW WenKai Mono';
+  src: url('/fonts/LxgwWenKai/LXGWWenKaiMono-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai Mono';
+  src: url('/fonts/LxgwWenKai/LXGWWenKaiMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai Mono';
+  src: url('/fonts/LxgwWenKai/LXGWWenKaiMono-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜文楷GB字体 */
+@font-face {
+  font-family: 'LXGW WenKai GB';
+  src: url('/fonts/LxgwWenkaiGB/LXGWWenKaiGB-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai GB';
+  src: url('/fonts/LxgwWenkaiGB/LXGWWenKaiGB-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai GB';
+  src: url('/fonts/LxgwWenkaiGB/LXGWWenKaiGB-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜文楷GB等宽字体 */
+@font-face {
+  font-family: 'LXGW WenKai Mono GB';
+  src: url('/fonts/LxgwWenkaiGB/LXGWWenKaiMonoGB-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai Mono GB';
+  src: url('/fonts/LxgwWenkaiGB/LXGWWenKaiMonoGB-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai Mono GB';
+  src: url('/fonts/LxgwWenkaiGB/LXGWWenKaiMonoGB-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜文楷TC字体（繁体中文版） */
+@font-face {
+  font-family: 'LXGW WenKai TC';
+  src: url('/fonts/LxgwWenkaiTC/LXGWWenKaiTC-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai TC';
+  src: url('/fonts/LxgwWenkaiTC/LXGWWenKaiTC-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai TC';
+  src: url('/fonts/LxgwWenkaiTC/LXGWWenKaiTC-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜文楷TC等宽字体（繁体中文版） */
+@font-face {
+  font-family: 'LXGW WenKai Mono TC';
+  src: url('/fonts/LxgwWenkaiTC/LXGWWenKaiMonoTC-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai Mono TC';
+  src: url('/fonts/LxgwWenkaiTC/LXGWWenKaiMonoTC-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW WenKai Mono TC';
+  src: url('/fonts/LxgwWenkaiTC/LXGWWenKaiMonoTC-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜新晰黑字体（晰致尚铭系列） */
+@font-face {
+  font-family: 'LXGW Neo XiHei';
+  src: url('/fonts/LxgwNeoXiHei/LXGWNeoXiHei.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW Neo XiHei Plus';
+  src: url('/fonts/LxgwNeoXiHei/LXGWNeoXiHeiPlus.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜致宋字体（晰致尚铭系列） */
+@font-face {
+  font-family: 'LXGW ZhiSong';
+  src: url('/fonts/LxgwZhiSong/LXGWZhiSongCL.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW ZhiSong';
+  src: url('/fonts/LxgwZhiSong/LXGWZhiSongMN.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜新致宋字体（晰致尚铭系列） */
+@font-face {
+  font-family: 'LXGW Neo ZhiSong';
+  src: url('/fonts/LxgwNeoZhiSong/LXGWNeoZhiSong.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW Neo ZhiSong Plus';
+  src: url('/fonts/LxgwNeoZhiSong/LXGWNeoZhiSongPlus.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜漫黑字体（晰致尚铭系列） */
+@font-face {
+  font-family: 'LXGW Marker Gothic';
+  src: url('/fonts/LxgwMarkerGothic/LXGWMarkerGothic-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载霞鹜臻楷字体（晰致尚铭系列） */
+@font-face {
+  font-family: 'LXGW ZhenKai GB';
+  src: url('/fonts/LxgwZhenKai/LXGWZhenKaiGB-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'LXGW ZhenKai Slab GB';
+  src: url('/fonts/LxgwZhenKai/LXGWZhenKaiSlabGB-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载小赖字体 */
+@font-face {
+  font-family: 'Xiaolai';
+  src: url('/fonts/kose-font/Xiaolai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Xiaolai Mono';
+  src: url('/fonts/kose-font/XiaolaiMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载悠哉字体 */
+@font-face {
+  font-family: 'Yozai';
+  src: url('/fonts/yozai-font/Yozai-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Yozai';
+  src: url('/fonts/yozai-font/Yozai-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Yozai';
+  src: url('/fonts/yozai-font/Yozai-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载 Noto Sans SC 字体（思源黑体简体中文） */
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/NotoSansSC-VariableFont_wght.ttf') format('truetype-variations');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Noto Sans SC 静态字体备选（用于不支持可变字体的浏览器） */
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-ExtraLight.ttf') format('truetype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-ExtraBold.ttf') format('truetype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Noto Sans SC';
+  src: url('/fonts/Noto_Sans_SC/static/NotoSansSC-Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载 HarmonyOS Sans SC 字体（华为鸿蒙字体简体中文） */
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans SC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_SC/HarmonyOS_Sans_SC_Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* 加载 HarmonyOS Sans TC 字体（华为鸿蒙字体繁体中文） */
+@font-face {
+  font-family: 'HarmonyOS Sans TC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_TC/HarmonyOS_Sans_TC_Thin.ttf') format('truetype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans TC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_TC/HarmonyOS_Sans_TC_Light.ttf') format('truetype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans TC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_TC/HarmonyOS_Sans_TC_Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans TC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_TC/HarmonyOS_Sans_TC_Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans TC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_TC/HarmonyOS_Sans_TC_Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'HarmonyOS Sans TC';
+  src: url('/fonts/HarmonyOS-Sans/HarmonyOS_Sans_TC/HarmonyOS_Sans_TC_Black.ttf') format('truetype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   body {
     @apply bg-gray-50 text-gray-900;
@@ -21,7 +551,13 @@
   }
   
   body {
-    background: white;
+    background: white !important;
+  }
+  
+  /* 确保所有页面容器在打印时都是白色背景 */
+  body > div,
+  body > div > div {
+    background: white !important;
   }
   
   header {
@@ -36,6 +572,7 @@
   /* 只显示简历预览内容 */
   main > div.flex {
     display: block !important;
+    background: white !important;
   }
   
   main > div.flex > div:first-child,
@@ -48,6 +585,8 @@
     max-width: 100% !important;
     margin: 0 !important;
     flex: none !important;
+    background: white !important;
+    padding: 0 !important;
   }
   
   #resume-preview {
@@ -55,6 +594,39 @@
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
+    border: none !important;
+    border-radius: 0 !important;
+    background: white !important;
+  }
+  
+  /* 确保打印时没有边框和圆角 */
+  #resume-preview,
+  #resume-preview * {
+    border-radius: 0 !important;
+  }
+  
+  /* 确保所有容器在打印时都是白色背景 */
+  main,
+  main > div,
+  main > div > div,
+  body > div[class*="bg-gray"],
+  div[class*="bg-gray"] {
+    background: white !important;
+  }
+
+  /* 确保打印时保留背景色和边框 */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  /* 确保标签徽章和轮廓样式在打印时正确显示 */
+  #resume-preview span[style*="backgroundColor"],
+  #resume-preview span[style*="background-color"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
   }
   
   /* 不显示页码时的样式 */
