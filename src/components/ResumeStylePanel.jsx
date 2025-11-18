@@ -8,10 +8,10 @@ function CollapsibleSection({ title, defaultOpen = true, children }) {
   const [isOpen, setIsOpen] = useState(defaultOpen)
 
   return (
-    <div className="border-t border-gray-200 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
+    <div className="border-t border-gray-100 pt-3 mt-3 first:border-t-0 first:pt-0 first:mt-0">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between text-sm font-semibold text-gray-800 mb-2 hover:text-gray-900 transition-colors py-1"
+        className="w-full flex items-center justify-between text-sm font-medium text-gray-900 mb-2 hover:text-gray-900 transition-colors py-1"
       >
         <span>{title}</span>
         <svg
@@ -276,21 +276,24 @@ function ResumeStylePanel({ onStyleChange }) {
   }
 
   return (
-    <div className="w-64 bg-white border border-gray-200 rounded-lg shadow-sm p-4 sticky top-24 max-h-[calc(100vh-8rem)] overflow-y-auto no-print">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3 pb-2 border-b border-gray-200">样式配置</h3>
+    <div className="h-full w-full bg-white overflow-y-auto no-print">
+      <div className="p-4 border-b border-gray-100">
+        <h3 className="text-sm font-medium text-gray-900">样式配置</h3>
+      </div>
+      <div className="p-4">
       
       <div className="space-y-0">
         {/* 简历主题 */}
-        <CollapsibleSection title="简历主题" defaultOpen={true}>
+        <CollapsibleSection title="简历主题" defaultOpen={false}>
           {/* 预设主题选择 */}
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               预设主题
             </label>
             <select
               value={GetCurrentThemeId()}
               onChange={(e) => HandleThemeChange(e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 bg-white"
             >
               {presetThemes.map((theme) => (
                 <option key={theme.id} value={theme.id}>
@@ -307,7 +310,7 @@ function ResumeStylePanel({ onStyleChange }) {
           </div>
 
           {/* 简历背景色 */}
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               简历背景色
             </label>
@@ -316,25 +319,25 @@ function ResumeStylePanel({ onStyleChange }) {
                 type="color"
                 value={styleSettings.resumeBackgroundColor || '#ffffff'}
                 onChange={(e) => HandleStyleChange('resumeBackgroundColor', e.target.value)}
-                className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
               />
               <input
                 type="text"
                 value={styleSettings.resumeBackgroundColor || '#ffffff'}
                 onChange={(e) => HandleStyleChange('resumeBackgroundColor', e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
               />
             </div>
           </div>
 
           {/* 是否使用章节背景色 */}
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="flex items-center gap-2 text-xs font-medium text-gray-600">
               <input
                 type="checkbox"
                 checked={styleSettings.useSectionBackground || false}
                 onChange={(e) => HandleStyleChange('useSectionBackground', e.target.checked)}
-                className="w-3.5 h-3.5 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                className="w-3.5 h-3.5 text-gray-900 border-gray-200 rounded-lg focus:ring-gray-900"
               />
               <span>启用章节背景色</span>
             </label>
@@ -342,7 +345,7 @@ function ResumeStylePanel({ onStyleChange }) {
 
           {/* 章节背景色 */}
           {styleSettings.useSectionBackground && (
-            <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <label className="block text-xs font-medium text-gray-600 mb-1.5">
                 章节背景色
               </label>
@@ -351,13 +354,13 @@ function ResumeStylePanel({ onStyleChange }) {
                   type="color"
                   value={styleSettings.sectionBackgroundColor || '#f9fafb'}
                   onChange={(e) => HandleStyleChange('sectionBackgroundColor', e.target.value)}
-                  className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                  className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
                 />
                 <input
                   type="text"
                   value={styleSettings.sectionBackgroundColor || '#f9fafb'}
                   onChange={(e) => HandleStyleChange('sectionBackgroundColor', e.target.value)}
-                  className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                 />
               </div>
             </div>
@@ -365,8 +368,8 @@ function ResumeStylePanel({ onStyleChange }) {
         </CollapsibleSection>
 
         {/* 字体设置 */}
-        <CollapsibleSection title="字体设置" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+        <CollapsibleSection title="字体设置" defaultOpen={true}>
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-2">
               字体（鼠标悬停预览，滚轮切换，点击选择）
             </label>
@@ -378,14 +381,14 @@ function ResumeStylePanel({ onStyleChange }) {
             />
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               正文字号
             </label>
             <select
               value={styleSettings.fontSize}
               onChange={(e) => HandleStyleChange('fontSize', parseInt(e.target.value))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             >
               {fontSizeOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -395,7 +398,7 @@ function ResumeStylePanel({ onStyleChange }) {
             </select>
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               行间距: {styleSettings.lineHeight}
             </label>
@@ -418,7 +421,7 @@ function ResumeStylePanel({ onStyleChange }) {
 
         {/* 标题设置 */}
         <CollapsibleSection title="标题设置" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               标题字号
             </label>
@@ -436,7 +439,7 @@ function ResumeStylePanel({ onStyleChange }) {
                   HandleStyleChange('titleFontSize', newValue)
                 }
               }}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             >
               {fontSizeOptions.filter(opt => opt.value >= 16 && opt.value <= 36).map((option) => (
                 <option key={option.value} value={option.value}>
@@ -446,14 +449,14 @@ function ResumeStylePanel({ onStyleChange }) {
             </select>
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               职位字号
             </label>
             <select
               value={styleSettings.titleTitleFontSize || styleSettings.titleFontSize}
               onChange={(e) => HandleStyleChange('titleTitleFontSize', parseInt(e.target.value))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             >
               {fontSizeOptions.filter(opt => opt.value >= 16 && opt.value <= 36).map((option) => (
                 <option key={option.value} value={option.value}>
@@ -463,14 +466,14 @@ function ResumeStylePanel({ onStyleChange }) {
             </select>
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               章节标题字号
             </label>
             <select
               value={styleSettings.sectionTitleFontSize}
               onChange={(e) => HandleStyleChange('sectionTitleFontSize', parseInt(e.target.value))}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             >
               {fontSizeOptions.filter(opt => opt.value >= 14 && opt.value <= 28).map((option) => (
                 <option key={option.value} value={option.value}>
@@ -483,7 +486,7 @@ function ResumeStylePanel({ onStyleChange }) {
 
         {/* 颜色设置 */}
         <CollapsibleSection title="颜色设置" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               文字颜色
             </label>
@@ -492,18 +495,18 @@ function ResumeStylePanel({ onStyleChange }) {
                 type="color"
                 value={styleSettings.textColor}
                 onChange={(e) => HandleStyleChange('textColor', e.target.value)}
-                className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
               />
               <input
                 type="text"
                 value={styleSettings.textColor}
                 onChange={(e) => HandleStyleChange('textColor', e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
               />
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               标题颜色
             </label>
@@ -512,18 +515,18 @@ function ResumeStylePanel({ onStyleChange }) {
                 type="color"
                 value={styleSettings.titleColor}
                 onChange={(e) => HandleStyleChange('titleColor', e.target.value)}
-                className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
               />
               <input
                 type="text"
                 value={styleSettings.titleColor}
                 onChange={(e) => HandleStyleChange('titleColor', e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
               />
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               章节标题颜色
             </label>
@@ -532,13 +535,13 @@ function ResumeStylePanel({ onStyleChange }) {
                 type="color"
                 value={styleSettings.sectionTitleColor}
                 onChange={(e) => HandleStyleChange('sectionTitleColor', e.target.value)}
-                className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
               />
               <input
                 type="text"
                 value={styleSettings.sectionTitleColor}
                 onChange={(e) => HandleStyleChange('sectionTitleColor', e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
               />
             </div>
           </div>
@@ -546,7 +549,7 @@ function ResumeStylePanel({ onStyleChange }) {
 
         {/* 间距设置 */}
         <CollapsibleSection title="间距设置" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               段落间距: {styleSettings.spacing}em
             </label>
@@ -569,14 +572,14 @@ function ResumeStylePanel({ onStyleChange }) {
 
         {/* 专业标签样式 */}
         <CollapsibleSection title="专业标签样式" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               样式类型
             </label>
             <select
               value={styleSettings.tagsStyle}
               onChange={(e) => HandleStyleChange('tagsStyle', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             >
               <option value="text-separator">文本分隔符</option>
               <option value="tag-badge">标签徽章</option>
@@ -586,7 +589,7 @@ function ResumeStylePanel({ onStyleChange }) {
           </div>
 
           {styleSettings.tagsStyle === 'text-separator' && (
-            <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+            <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <label className="block text-xs font-medium text-gray-600 mb-1.5">
                 分隔符
               </label>
@@ -606,7 +609,7 @@ function ResumeStylePanel({ onStyleChange }) {
                     HandleStyleChange('tagsSeparator', e.target.value)
                   }
                 }}
-                className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 mb-2"
               >
                 <option value="｜">竖线（｜）</option>
                 <option value="|">竖线（|）</option>
@@ -633,7 +636,7 @@ function ResumeStylePanel({ onStyleChange }) {
                       HandleStyleChange('tagsSeparator', customValue)
                     }}
                     placeholder="输入自定义分隔符"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                   />
                 )
               })()}
@@ -642,7 +645,7 @@ function ResumeStylePanel({ onStyleChange }) {
 
           {(styleSettings.tagsStyle === 'tag-badge' || styleSettings.tagsStyle === 'tag-outline') && (
             <>
-              <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">
                   标签背景色
                 </label>
@@ -651,18 +654,18 @@ function ResumeStylePanel({ onStyleChange }) {
                     type="color"
                     value={styleSettings.tagsBackgroundColor}
                     onChange={(e) => HandleStyleChange('tagsBackgroundColor', e.target.value)}
-                    className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                    className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
                   />
                   <input
                     type="text"
                     value={styleSettings.tagsBackgroundColor}
                     onChange={(e) => HandleStyleChange('tagsBackgroundColor', e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                   />
                 </div>
               </div>
 
-              <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">
                   标签文字颜色
                 </label>
@@ -671,19 +674,19 @@ function ResumeStylePanel({ onStyleChange }) {
                     type="color"
                     value={styleSettings.tagsTextColor}
                     onChange={(e) => HandleStyleChange('tagsTextColor', e.target.value)}
-                    className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                    className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
                   />
                   <input
                     type="text"
                     value={styleSettings.tagsTextColor}
                     onChange={(e) => HandleStyleChange('tagsTextColor', e.target.value)}
-                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                   />
                 </div>
               </div>
 
               {styleSettings.tagsStyle === 'tag-outline' && (
-                <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                   <label className="block text-xs font-medium text-gray-600 mb-1.5">
                     标签边框颜色
                   </label>
@@ -692,26 +695,26 @@ function ResumeStylePanel({ onStyleChange }) {
                       type="color"
                       value={styleSettings.tagsBorderColor}
                       onChange={(e) => HandleStyleChange('tagsBorderColor', e.target.value)}
-                      className="w-12 h-8 border border-gray-300 rounded cursor-pointer"
+                      className="w-12 h-8 border border-gray-200 rounded-lg cursor-pointer"
                     />
                     <input
                       type="text"
                       value={styleSettings.tagsBorderColor}
                       onChange={(e) => HandleStyleChange('tagsBorderColor', e.target.value)}
-                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                     />
                   </div>
                 </div>
               )}
 
-              <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">
                   标签内边距
                 </label>
                 <select
                   value={styleSettings.tagsPadding}
                   onChange={(e) => HandleStyleChange('tagsPadding', e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                 >
                   <option value="2px 8px">小（2px 8px）</option>
                   <option value="4px 12px">中（4px 12px）</option>
@@ -720,14 +723,14 @@ function ResumeStylePanel({ onStyleChange }) {
                 </select>
               </div>
 
-              <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+              <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
                 <label className="block text-xs font-medium text-gray-600 mb-1.5">
                   标签圆角
                 </label>
                 <select
                   value={styleSettings.tagsBorderRadius}
                   onChange={(e) => HandleStyleChange('tagsBorderRadius', e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
                 >
                   <option value="0px">无圆角</option>
                   <option value="4px">小圆角（4px）</option>
@@ -742,14 +745,14 @@ function ResumeStylePanel({ onStyleChange }) {
 
         {/* 其他设置 */}
         <CollapsibleSection title="其他设置" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               日期格式
             </label>
             <select
               value={styleSettings.dateFormat || 'dot'}
               onChange={(e) => HandleStyleChange('dateFormat', e.target.value)}
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             >
               <option value="dot">xx.xx - xx.xx</option>
               <option value="chinese">xxxx年xx月 - xxxx年xx月</option>
@@ -759,7 +762,7 @@ function ResumeStylePanel({ onStyleChange }) {
 
         {/* 打印页眉页脚设置 */}
         <CollapsibleSection title="打印页眉页脚" defaultOpen={false}>
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               页眉文本
             </label>
@@ -768,11 +771,11 @@ function ResumeStylePanel({ onStyleChange }) {
               value={styleSettings.headerText || ''}
               onChange={(e) => HandleStyleChange('headerText', e.target.value)}
               placeholder="例如：在线简历"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               页眉链接
             </label>
@@ -781,11 +784,11 @@ function ResumeStylePanel({ onStyleChange }) {
               value={styleSettings.headerUrl || ''}
               onChange={(e) => HandleStyleChange('headerUrl', e.target.value)}
               placeholder="例如：https://example.com/resume"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               页脚文本
             </label>
@@ -794,11 +797,11 @@ function ResumeStylePanel({ onStyleChange }) {
               value={styleSettings.footerText || ''}
               onChange={(e) => HandleStyleChange('footerText', e.target.value)}
               placeholder="例如：在线简历"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
 
-          <div className="bg-gray-50 rounded-md p-3 border border-gray-100">
+          <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <label className="block text-xs font-medium text-gray-600 mb-1.5">
               页脚链接
             </label>
@@ -807,10 +810,11 @@ function ResumeStylePanel({ onStyleChange }) {
               value={styleSettings.footerUrl || ''}
               onChange={(e) => HandleStyleChange('footerUrl', e.target.value)}
               placeholder="例如：https://example.com/resume"
-              className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900"
             />
           </div>
         </CollapsibleSection>
+      </div>
       </div>
     </div>
   )

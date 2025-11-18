@@ -8,6 +8,8 @@ import {
   GetTemplates
 } from '../utils/resumeAI'
 import LLMConfigPanel from './LLMConfigPanel'
+import Toast from './Toast'
+import { useToast } from '../hooks/useToast'
 
 const FIELD_OPTIONS = [
   { value: 'personalInfo', label: '个人信息', icon: '👤' },
@@ -109,7 +111,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       setShowOptimized(true)
       setActiveTab('optimize')
     } catch (error) {
-      alert(`优化失败: ${error.message}`)
+      error(`优化失败: ${error.message}`)
     } finally {
       setIsOptimizing(false)
     }
@@ -186,7 +188,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
         case 'projects': {
           // 工作经历和项目经历结构复杂，暂时不自动同步
           // 用户可以在普通编辑器中手动应用
-          alert('工作经历和项目经历结构较复杂，建议在普通编辑器中手动应用优化后的内容')
+          warning('工作经历和项目经历结构较复杂，建议在普通编辑器中手动应用优化后的内容')
           return
         }
         default:
@@ -197,7 +199,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       setFieldContent(content)
     } catch (error) {
       console.error('同步数据失败:', error)
-      alert('同步失败，请手动复制内容到普通编辑器')
+      error('同步失败，请手动复制内容到普通编辑器')
     }
   }
 
@@ -211,7 +213,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
   // 应用到简历按钮
   const HandleApplyToResume = () => {
     if (!fieldContent.trim()) {
-      alert('内容为空，无法应用')
+      warning('内容为空，无法应用')
       return
     }
     SyncContentToData(fieldContent)
@@ -227,7 +229,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       setRewriteSuggestions(suggestions)
       setActiveTab('rewrite')
     } catch (error) {
-      alert(`获取改写建议失败: ${error.message}`)
+      error(`获取改写建议失败: ${error.message}`)
     } finally {
       setIsLoadingRewrite(false)
     }
@@ -255,7 +257,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       setKeywordsData(keywords)
       setActiveTab('keywords')
     } catch (error) {
-      alert(`获取关键词建议失败: ${error.message}`)
+      error(`获取关键词建议失败: ${error.message}`)
     } finally {
       setIsLoadingKeywords(false)
     }
@@ -271,7 +273,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       setTemplates(templatesData)
       setActiveTab('templates')
     } catch (error) {
-      alert(`获取模板失败: ${error.message}`)
+      error(`获取模板失败: ${error.message}`)
     } finally {
       setIsLoadingTemplates(false)
     }
@@ -294,7 +296,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       const finalResume = await GenerateFinalResume(data)
       onGenerateFinal(finalResume)
     } catch (error) {
-      alert(`生成失败: ${error.message}`)
+      error(`生成失败: ${error.message}`)
     } finally {
       setIsAnalyzing(false)
     }
@@ -340,7 +342,7 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
       {/* 三栏式布局 */}
       <div className="flex-1 flex overflow-hidden">
         {/* 左侧：字段导航 */}
-        <div className="w-64 bg-white border-r border-gray-200 overflow-y-auto">
+        <div className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
           <div className="p-4">
             <h3 className="text-sm font-semibold text-gray-700 mb-3">字段导航</h3>
             <div className="space-y-1">
@@ -793,6 +795,16 @@ function SmartResumeEditor({ data, onChange, onGenerateFinal }) {
 
       {/* API配置面板 */}
       {showConfig && <LLMConfigPanel onClose={() => setShowConfig(false)} />}
+
+      {/* Toast通知 */}
+      {toast && (
+        <Toast
+          message={toast.message}
+          type={toast.type}
+          duration={toast.duration}
+          onClose={hideToast}
+        />
+      )}
     </div>
   )
 }

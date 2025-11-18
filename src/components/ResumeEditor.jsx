@@ -389,7 +389,7 @@ function ResumeEditor({ data, onChange }) {
   return (
     <div className="flex gap-6 max-w-7xl mx-auto">
       {/* 左侧目录 */}
-      <div className="w-64 flex-shrink-0">
+      <div className="w-80 flex-shrink-0">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sticky top-24">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">目录结构</h3>
           <DndContext

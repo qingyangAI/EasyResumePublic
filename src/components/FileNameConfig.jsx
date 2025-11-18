@@ -13,6 +13,21 @@ function FileNameConfig({ data, onClose }) {
     setTemplateData(saved)
   }, [])
 
+  // ESC关闭弹窗
+  useEffect(() => {
+    const HandleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        onClose()
+      }
+    }
+
+    window.addEventListener('keydown', HandleKeyDown)
+    return () => {
+      window.removeEventListener('keydown', HandleKeyDown)
+    }
+  }, [onClose])
+
   useEffect(() => {
     if (data) {
       const preview = GenerateFileName(data, '')
@@ -66,7 +81,14 @@ function FileNameConfig({ data, onClose }) {
   ]
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div 
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose()
+        }
+      }}
+    >
       <div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-900">文件名配置</h2>

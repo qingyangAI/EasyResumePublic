@@ -108,18 +108,632 @@ export const GetDefaultResumeData = () => ({
   }
 })
 
+// 生成唯一ID
+export const GenerateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2)
+}
+
+// 获取模板简历1：前端开发工程师
+export const GetTemplateResume1 = () => ({
+  id: GenerateId(),
+  name: '模板1：前端开发工程师',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  isTemplate: true,
+  data: {
+    personalInfo: {
+      name: '张三',
+      title: '高级前端开发工程师',
+      phone: '138-0000-0000',
+      email: 'zhangsan@example.com',
+      age: '28',
+      blog: 'https://blog.example.com',
+      github: 'https://github.com/zhangsan',
+      targetCity: '北京',
+      works: [
+        { name: '个人作品集', url: 'https://portfolio.example.com' },
+        { name: '开源项目', url: 'https://github.com/zhangsan/project' }
+      ]
+    },
+    sectionOrder: ['tags', 'reusableCapabilities', 'careerObjective', 'advantages', 'education', 'workExperiences', 'honors', 'projects'],
+    tags: ['Vue.js', 'React', 'TypeScript', 'Node.js', 'Webpack', 'Vite'],
+    reusableCapabilities: [
+      '熟练掌握Vue.js、React等主流前端框架，具备5年前端开发经验',
+      '精通JavaScript、TypeScript，熟悉ES6+新特性',
+      '熟悉前端工程化工具链，如Webpack、Vite、Rollup等',
+      '具备良好的代码规范和团队协作能力'
+    ],
+    careerObjective: '寻求高级前端开发工程师职位，期望在技术深度和团队协作方面有更大突破',
+    advantages: [
+      '5年前端开发经验，参与过多个大型项目',
+      '熟悉前端性能优化，有丰富的优化实践经验',
+      '具备良好的学习能力和问题解决能力',
+      '有团队管理经验，曾带领3人小团队完成项目'
+    ],
+    honors: [
+      '2023年度优秀员工',
+      '2022年公司技术分享会最佳分享奖',
+      '2021年开源项目贡献奖'
+    ],
+    workExperiences: [
+      {
+        company: 'XX科技有限公司',
+        companyType: '互联网',
+        position: '高级前端开发工程师',
+        period: '2021.03 - 至今',
+        reportTo: '技术总监',
+        subordinates: '3人',
+        promotionPath: '前端开发工程师 → 高级前端开发工程师',
+        achievements: [
+          '负责公司核心产品的前端架构设计和开发，提升系统性能30%',
+          '主导前端工程化改造，将构建时间从5分钟缩短至1分钟',
+          '建立前端代码规范和最佳实践，提升团队开发效率',
+          '完成3个大型项目的从0到1开发，累计用户量超过100万'
+        ],
+        responsibilities: [
+          '负责前端技术选型和架构设计',
+          '参与产品需求评审，提供技术方案',
+          '指导初级开发人员，进行代码审查',
+          '优化前端性能，提升用户体验'
+        ]
+      },
+      {
+        company: 'YY互联网公司',
+        companyType: '互联网',
+        position: '前端开发工程师',
+        period: '2019.06 - 2021.02',
+        reportTo: '前端负责人',
+        subordinates: '',
+        promotionPath: '初级前端开发工程师 → 前端开发工程师',
+        achievements: [
+          '参与公司主要产品的前端开发，负责核心模块实现',
+          '优化页面加载速度，首屏加载时间减少40%',
+          '完成移动端适配，支持多设备访问'
+        ],
+        responsibilities: [
+          '根据UI设计稿完成页面开发',
+          '与后端协作完成接口对接',
+          '修复线上bug，保证系统稳定运行'
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: '企业级管理系统',
+        period: '2022.01 - 2022.06',
+        role: '前端负责人',
+        description: [
+          '基于Vue3 + TypeScript开发的企业级管理系统，支持多租户、权限管理等复杂业务场景',
+          '采用微前端架构，实现模块化开发和独立部署',
+          '集成数据可视化组件，提供丰富的图表展示功能',
+          '项目上线后获得客户一致好评，为公司带来500万+订单'
+        ]
+      },
+      {
+        name: '移动端H5应用',
+        period: '2021.08 - 2021.12',
+        role: '核心开发',
+        description: [
+          '使用React Native开发的跨平台移动应用，支持iOS和Android',
+          '实现复杂的动画效果和交互体验，提升用户满意度',
+          '优化应用性能，启动时间缩短50%',
+          '累计下载量超过50万次'
+        ]
+      }
+    ],
+    education: {
+      school: 'XX大学',
+      level: '本科',
+      period: '2015.09 - 2019.06',
+      major: '计算机科学与技术',
+      degree: '学士',
+      duration: 4,
+      startYear: 2015,
+      startMonth: 9,
+      endYear: 2019,
+      endMonth: 6,
+      achievements: [
+        '连续三年获得校级奖学金',
+        '参与大学生创新创业项目，获得省级奖项',
+        '担任计算机协会技术部部长'
+      ]
+    }
+  }
+})
+
+// 获取模板简历2：产品经理
+export const GetTemplateResume2 = () => ({
+  id: GenerateId(),
+  name: '模板2：产品经理',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  isTemplate: true,
+  data: {
+    personalInfo: {
+      name: '李四',
+      title: '高级产品经理',
+      phone: '139-0000-0000',
+      email: 'lisi@example.com',
+      age: '30',
+      blog: 'https://pm-blog.example.com',
+      github: '',
+      targetCity: '上海',
+      works: [
+        { name: '产品设计作品', url: 'https://design.example.com' }
+      ]
+    },
+    sectionOrder: ['tags', 'reusableCapabilities', 'careerObjective', 'advantages', 'education', 'workExperiences', 'honors', 'projects'],
+    tags: ['产品设计', '用户体验', '数据分析', '项目管理', '敏捷开发', '用户研究'],
+    reusableCapabilities: [
+      '6年产品经理经验，熟悉B端和C端产品设计',
+      '精通用户研究、需求分析、产品规划等核心技能',
+      '具备良好的数据分析和商业思维',
+      '熟悉敏捷开发流程，有丰富的跨部门协作经验'
+    ],
+    careerObjective: '寻求高级产品经理或产品总监职位，期望在战略规划和团队管理方面有更大发展',
+    advantages: [
+      '6年产品经验，从0到1打造过3款成功产品',
+      '具备敏锐的市场洞察力和用户需求分析能力',
+      '有丰富的跨部门协作和项目管理经验',
+      '熟悉数据驱动产品迭代的方法论'
+    ],
+    honors: [
+      '2023年公司年度最佳产品奖',
+      '2022年优秀产品经理',
+      '2021年产品创新奖'
+    ],
+    workExperiences: [
+      {
+        company: 'AA互联网公司',
+        companyType: '互联网',
+        position: '高级产品经理',
+        period: '2020.05 - 至今',
+        reportTo: '产品总监',
+        subordinates: '5人',
+        promotionPath: '产品经理 → 高级产品经理',
+        achievements: [
+          '负责公司核心产品的产品规划和迭代，产品DAU从10万增长至100万',
+          '主导产品重构项目，提升用户留存率40%',
+          '建立产品数据指标体系，实现数据驱动产品迭代',
+          '完成3个重要功能模块的设计和上线，获得用户好评'
+        ],
+        responsibilities: [
+          '负责产品规划和需求分析',
+          '输出PRD文档，与设计、开发团队协作',
+          '跟踪产品数据，分析用户行为',
+          '管理产品团队，指导初级产品经理'
+        ]
+      },
+      {
+        company: 'BB科技公司',
+        companyType: '互联网',
+        position: '产品经理',
+        period: '2018.03 - 2020.04',
+        reportTo: '产品负责人',
+        subordinates: '',
+        promotionPath: '产品助理 → 产品经理',
+        achievements: [
+          '负责移动端产品设计和迭代，用户满意度提升30%',
+          '完成用户调研，输出用户画像和需求分析报告',
+          '参与产品战略规划，提出多个有价值的建议'
+        ],
+        responsibilities: [
+          '收集和分析用户需求',
+          '设计产品功能和交互流程',
+          '跟进产品开发进度，确保按时上线',
+          '分析产品数据，提出优化建议'
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: '企业SaaS平台',
+        period: '2021.01 - 2022.06',
+        role: '产品负责人',
+        description: [
+          '从0到1设计并上线企业级SaaS平台，涵盖CRM、项目管理、协作等核心功能',
+          '通过深度用户调研，准确把握企业用户痛点，产品上线6个月获得1000+企业客户',
+          '建立完善的产品运营体系，客户续费率超过80%',
+          '产品获得行业认可，获得多项产品创新奖项'
+        ]
+      },
+      {
+        name: '移动端社交应用',
+        period: '2019.06 - 2020.12',
+        role: '核心产品',
+        description: [
+          '负责移动端社交应用的核心功能设计和迭代',
+          '通过A/B测试优化产品功能，用户活跃度提升50%',
+          '设计创新的社交玩法，获得用户好评',
+          '应用累计用户量超过500万'
+        ]
+      }
+    ],
+    education: {
+      school: 'XX大学',
+      level: '本科',
+      period: '2014.09 - 2018.06',
+      major: '信息管理与信息系统',
+      degree: '学士',
+      duration: 4,
+      startYear: 2014,
+      startMonth: 9,
+      endYear: 2018,
+      endMonth: 6,
+      achievements: [
+        '获得优秀毕业生称号',
+        '参与大学生创业项目，获得国家级奖项',
+        '担任学生会副主席，组织多次大型活动'
+      ]
+    }
+  }
+})
+
+// 获取模板简历3：Java后端开发工程师
+export const GetTemplateResume3 = () => ({
+  id: GenerateId(),
+  name: '模板3：Java后端开发工程师',
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  isTemplate: true,
+  data: {
+    personalInfo: {
+      name: '王五',
+      title: '高级Java开发工程师',
+      phone: '137-0000-0000',
+      email: 'wangwu@example.com',
+      age: '29',
+      blog: '',
+      github: 'https://github.com/wangwu',
+      targetCity: '深圳',
+      works: []
+    },
+    sectionOrder: ['tags', 'reusableCapabilities', 'careerObjective', 'advantages', 'education', 'workExperiences', 'honors', 'projects'],
+    tags: ['Java', 'Spring Boot', '微服务', 'MySQL', 'Redis', 'Kafka', 'Docker', 'Kubernetes'],
+    reusableCapabilities: [
+      '7年Java后端开发经验，精通Spring Boot、Spring Cloud等框架',
+      '熟悉微服务架构设计，有丰富的分布式系统开发经验',
+      '精通MySQL、Redis等数据库，具备数据库优化能力',
+      '熟悉消息队列、缓存、分布式锁等中间件使用'
+    ],
+    careerObjective: '寻求高级Java开发工程师或技术专家职位，期望在技术深度和架构设计方面有更大突破',
+    advantages: [
+      '7年后端开发经验，参与过多个高并发系统设计',
+      '熟悉分布式系统架构，有丰富的性能优化经验',
+      '具备良好的代码质量和系统设计能力',
+      '有技术团队管理经验，曾负责技术方案评审'
+    ],
+    honors: [
+      '2023年技术专家称号',
+      '2022年最佳技术贡献奖',
+      '2021年优秀技术分享奖'
+    ],
+    workExperiences: [
+      {
+        company: 'CC互联网公司',
+        companyType: '互联网',
+        position: '高级Java开发工程师',
+        period: '2020.08 - 至今',
+        reportTo: '技术总监',
+        subordinates: '4人',
+        promotionPath: 'Java开发工程师 → 高级Java开发工程师',
+        achievements: [
+          '负责核心业务系统架构设计和开发，系统QPS从1万提升至10万',
+          '主导微服务架构改造，将单体应用拆分为20+微服务',
+          '优化数据库性能，查询响应时间减少60%',
+          '设计并实现分布式缓存方案，缓存命中率达到95%'
+        ],
+        responsibilities: [
+          '负责核心业务模块的设计和开发',
+          '参与技术方案评审，指导团队技术选型',
+          '优化系统性能，解决高并发场景下的技术难题',
+          '指导初级开发人员，进行代码审查和技术分享'
+        ]
+      },
+      {
+        company: 'DD科技公司',
+        companyType: '互联网',
+        position: 'Java开发工程师',
+        period: '2017.07 - 2020.07',
+        reportTo: '技术负责人',
+        subordinates: '',
+        promotionPath: '初级Java开发工程师 → Java开发工程师',
+        achievements: [
+          '参与公司主要业务系统的开发，负责核心功能实现',
+          '优化SQL查询，数据库性能提升50%',
+          '完成系统重构，代码可维护性大幅提升'
+        ],
+        responsibilities: [
+          '根据需求完成业务功能开发',
+          '与前端协作完成接口对接',
+          '维护和优化现有系统，修复线上问题'
+        ]
+      }
+    ],
+    projects: [
+      {
+        name: '高并发电商系统',
+        period: '2021.03 - 2022.09',
+        role: '核心开发',
+        description: [
+          '参与高并发电商系统的设计和开发，支持秒杀、抢购等高并发场景',
+          '采用分布式架构，使用Redis缓存、消息队列等技术，系统峰值QPS达到10万+',
+          '设计分布式锁和限流方案，保证系统稳定性',
+          '系统上线后稳定运行，支持了多次大型促销活动'
+        ]
+      },
+      {
+        name: '微服务架构改造',
+        period: '2020.10 - 2021.08',
+        role: '技术负责人',
+        description: [
+          '主导公司核心系统的微服务架构改造，将单体应用拆分为多个微服务',
+          '使用Spring Cloud构建微服务框架，实现服务注册、配置中心、网关等功能',
+          '建立完善的监控和日志体系，提升系统可观测性',
+          '改造后系统可扩展性和可维护性大幅提升，支持业务快速迭代'
+        ]
+      }
+    ],
+    education: {
+      school: 'XX大学',
+      level: '本科',
+      period: '2013.09 - 2017.06',
+      major: '软件工程',
+      degree: '学士',
+      duration: 4,
+      startYear: 2013,
+      startMonth: 9,
+      endYear: 2017,
+      endMonth: 6,
+      achievements: [
+        '获得国家励志奖学金',
+        '参与ACM程序设计竞赛，获得省级二等奖',
+        '完成多个课程设计项目，获得优秀评价'
+      ]
+    }
+  }
+})
+
+// 简历列表管理
+const RESUME_LIST_KEY = 'resumeList'
+const CURRENT_RESUME_ID_KEY = 'currentResumeId'
+
+// 获取所有简历列表
+export const GetResumeList = () => {
+  try {
+    const saved = localStorage.getItem(RESUME_LIST_KEY)
+    return saved ? JSON.parse(saved) : []
+  } catch (error) {
+    console.error('加载简历列表失败:', error)
+    return []
+  }
+}
+
+// 保存简历列表
+export const SaveResumeList = (list) => {
+  try {
+    localStorage.setItem(RESUME_LIST_KEY, JSON.stringify(list))
+  } catch (error) {
+    console.error('保存简历列表失败:', error)
+  }
+}
+
+// 获取当前选中的简历ID
+export const GetCurrentResumeId = () => {
+  try {
+    return localStorage.getItem(CURRENT_RESUME_ID_KEY) || null
+  } catch (error) {
+    console.error('获取当前简历ID失败:', error)
+    return null
+  }
+}
+
+// 保存当前选中的简历ID
+export const SaveCurrentResumeId = (id) => {
+  try {
+    if (id) {
+      localStorage.setItem(CURRENT_RESUME_ID_KEY, id)
+    } else {
+      localStorage.removeItem(CURRENT_RESUME_ID_KEY)
+    }
+  } catch (error) {
+    console.error('保存当前简历ID失败:', error)
+  }
+}
+
+// 根据ID获取简历
+export const GetResumeById = (id) => {
+  const list = GetResumeList()
+  return list.find(resume => resume.id === id) || null
+}
+
+// 添加简历
+export const AddResume = (resume) => {
+  const list = GetResumeList()
+  const newResume = {
+    ...resume,
+    id: resume.id || GenerateId(),
+    createdAt: resume.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  }
+  list.push(newResume)
+  SaveResumeList(list)
+  return newResume
+}
+
+// 更新简历
+export const UpdateResume = (id, data) => {
+  const list = GetResumeList()
+  const index = list.findIndex(resume => resume.id === id)
+  if (index !== -1) {
+    list[index] = {
+      ...list[index],
+      data: data,
+      updatedAt: new Date().toISOString()
+    }
+    SaveResumeList(list)
+    return list[index]
+  }
+  return null
+}
+
+// 更新简历名称
+export const UpdateResumeName = (id, name) => {
+  const list = GetResumeList()
+  const index = list.findIndex(resume => resume.id === id)
+  if (index !== -1) {
+    list[index] = {
+      ...list[index],
+      name: name,
+      updatedAt: new Date().toISOString()
+    }
+    SaveResumeList(list)
+    return list[index]
+  }
+  return null
+}
+
+// 删除简历
+export const DeleteResume = (id) => {
+  const list = GetResumeList()
+  const filtered = list.filter(resume => resume.id !== id)
+  SaveResumeList(filtered)
+  // 如果删除的是当前选中的简历，清除当前ID
+  if (GetCurrentResumeId() === id) {
+    SaveCurrentResumeId(null)
+  }
+  return filtered
+}
+
+// 复制简历
+export const CopyResume = (id) => {
+  const resume = GetResumeById(id)
+  if (!resume) return null
+  
+  const newResume = {
+    ...resume,
+    id: GenerateId(),
+    name: `${resume.name} (副本)`,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    isTemplate: false,
+    data: JSON.parse(JSON.stringify(resume.data)) // 深拷贝
+  }
+  
+  const list = GetResumeList()
+  const index = list.findIndex(r => r.id === id)
+  if (index >= 0) {
+    list.splice(index + 1, 0, newResume)
+  } else {
+    list.push(newResume)
+  }
+  SaveResumeList(list)
+  return newResume
+}
+
+// 调整简历顺序
+export const ReorderResume = (fromIndex, toIndex) => {
+  const list = GetResumeList()
+  if (fromIndex < 0 || fromIndex >= list.length || toIndex < 0 || toIndex >= list.length) {
+    return list
+  }
+  
+  const [moved] = list.splice(fromIndex, 1)
+  list.splice(toIndex, 0, moved)
+  SaveResumeList(list)
+  return list
+}
+
+// 排序简历列表
+export const SortResumeList = (sortBy = 'updatedAt', order = 'desc') => {
+  const list = GetResumeList()
+  const sorted = [...list].sort((a, b) => {
+    let aValue = a[sortBy]
+    let bValue = b[sortBy]
+    
+    // 处理日期字符串
+    if (sortBy === 'createdAt' || sortBy === 'updatedAt') {
+      aValue = new Date(aValue || 0).getTime()
+      bValue = new Date(bValue || 0).getTime()
+    } else if (sortBy === 'name') {
+      aValue = (aValue || '').toLowerCase()
+      bValue = (bValue || '').toLowerCase()
+    }
+    
+    if (order === 'asc') {
+      return aValue > bValue ? 1 : aValue < bValue ? -1 : 0
+    } else {
+      return aValue < bValue ? 1 : aValue > bValue ? -1 : 0
+    }
+  })
+  
+  SaveResumeList(sorted)
+  return sorted
+}
+
+// 清空所有简历
+export const ClearAllResumes = () => {
+  SaveResumeList([])
+  SaveCurrentResumeId(null)
+}
+
+// 初始化模板简历（仅在首次使用时）
+export const InitializeTemplates = () => {
+  const list = GetResumeList()
+  // 如果列表为空，添加3个模板
+  if (list.length === 0) {
+    const template1 = GetTemplateResume1()
+    const template2 = GetTemplateResume2()
+    const template3 = GetTemplateResume3()
+    SaveResumeList([template1, template2, template3])
+    return [template1, template2, template3]
+  }
+  return list
+}
+
+// 兼容旧版本的保存函数（已废弃，保留用于向后兼容）
 export const SaveResumeData = (data) => {
   try {
-    localStorage.setItem('resumeData', JSON.stringify(data))
+    // 如果当前有选中的简历，更新它
+    const currentId = GetCurrentResumeId()
+    if (currentId) {
+      UpdateResume(currentId, data)
+    } else {
+      // 否则保存到旧位置（向后兼容）
+      localStorage.setItem('resumeData', JSON.stringify(data))
+    }
   } catch (error) {
     console.error('保存简历数据失败:', error)
   }
 }
 
+// 兼容旧版本的加载函数（已废弃，保留用于向后兼容）
 export const LoadResumeData = () => {
   try {
+    // 优先从简历列表加载
+    const currentId = GetCurrentResumeId()
+    if (currentId) {
+      const resume = GetResumeById(currentId)
+      if (resume) {
+        return resume.data
+      }
+    }
+    // 如果没有选中的简历，尝试从旧位置加载（向后兼容）
     const saved = localStorage.getItem('resumeData')
-    return saved ? JSON.parse(saved) : null
+    if (saved) {
+      const oldData = JSON.parse(saved)
+      // 迁移旧数据到新系统
+      const newResume = AddResume({
+        name: '我的简历',
+        data: oldData,
+        isTemplate: false
+      })
+      SaveCurrentResumeId(newResume.id)
+      // 删除旧数据
+      localStorage.removeItem('resumeData')
+      return oldData
+    }
+    return null
   } catch (error) {
     console.error('加载简历数据失败:', error)
     return null
@@ -222,6 +836,39 @@ export const LoadFileNameTemplate = () => {
     return {
       template: '{name}-{title}-{phone}',
       customTemplate: ''
+    }
+  }
+}
+
+// 面板位置配置
+const PANEL_POSITION_KEY = 'resumePanelPosition'
+
+// 保存面板位置配置
+export const SavePanelPosition = (position) => {
+  try {
+    localStorage.setItem(PANEL_POSITION_KEY, JSON.stringify(position))
+  } catch (error) {
+    console.error('保存面板位置失败:', error)
+  }
+}
+
+// 加载面板位置配置
+export const LoadPanelPosition = () => {
+  try {
+    const saved = localStorage.getItem(PANEL_POSITION_KEY)
+    if (saved) {
+      return JSON.parse(saved)
+    }
+    // 默认位置：左侧简历列表，右侧样式配置
+    return {
+      resumeListPosition: 'left',
+      stylePanelPosition: 'right'
+    }
+  } catch (error) {
+    console.error('加载面板位置失败:', error)
+    return {
+      resumeListPosition: 'left',
+      stylePanelPosition: 'right'
     }
   }
 }
