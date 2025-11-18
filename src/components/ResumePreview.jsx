@@ -261,7 +261,7 @@ function ResumePreview({ data, style }) {
         </div>
       )}
 
-      <PersonalInfoSection data={data.personalInfo} />
+      <PersonalInfoSection data={data.personalInfo} style={style} />
       
       {(() => {
         // 确保sectionOrder包含所有必要的section，兼容旧数据
@@ -414,23 +414,56 @@ function ResumePreview({ data, style }) {
   )
 }
 
-function PersonalInfoSection({ data }) {
+function PersonalInfoSection({ data, style }) {
+  // 获取对齐配置，默认全部左对齐
+  // layout格式：{ rows: [{ columns: ['left', 'left', 'left'] }] }
+  // 每行可以有不同的列对齐方式：'left' | 'center' | 'right'
+  const layout = style?.personalInfoLayout || {
+    rows: [
+      { columns: ['left', 'left', 'left'] }, // 第一行：姓名、职位、空
+      { columns: ['left', 'left', 'left'] }  // 第二行及以后：联系信息
+    ]
+  }
+  
+  // 确保layout.rows存在且至少有一行
+  const rowLayouts = layout.rows || [{ columns: ['left', 'left', 'left'] }]
+  const firstRowLayout = rowLayouts[0] || { columns: ['left', 'left', 'left'] }
+  const contactRowLayout = rowLayouts[1] || rowLayouts[0] || { columns: ['left', 'left', 'left'] }
+  
+  // 获取对齐样式类
+  const getAlignmentClass = (align) => {
+    switch (align) {
+      case 'center': return 'text-center'
+      case 'right': return 'text-right'
+      default: return 'text-left'
+    }
+  }
+  
+  // 获取对齐样式对象
+  const getAlignmentStyle = (align) => {
+    switch (align) {
+      case 'center': return { textAlign: 'center' }
+      case 'right': return { textAlign: 'right' }
+      default: return { textAlign: 'left' }
+    }
+  }
+  
   if (!data) {
     return (
       <div className="mb-6" style={{ fontSize: 'var(--resume-font-size, 14px)', lineHeight: 'var(--resume-line-height, 1.6)', color: 'var(--resume-text-color, #1f2937)', marginBottom: 'var(--resume-spacing, 1.5em)' }}>
         {/* 姓名和职位在同一行 */}
-        <div className="flex items-start justify-between gap-4 w-full mb-2">
-          <div className="flex-shrink-0">
+        <div className="flex items-start gap-4 w-full mb-2">
+          <div className="flex-1" style={getAlignmentStyle(firstRowLayout.columns[0])}>
             <div className="font-bold" style={{ fontSize: 'var(--resume-title-font-size, 24px)', color: 'var(--resume-title-color, #111827)', fontFamily: 'var(--resume-font-family, inherit)' }}>
               （姓名）
             </div>
           </div>
-          <div className="flex-shrink-0">
+          <div className="flex-1" style={getAlignmentStyle(firstRowLayout.columns[1])}>
             <div style={{ fontSize: 'var(--resume-title-title-font-size, var(--resume-title-font-size, 24px))', color: 'var(--resume-text-color, #1f2937)', fontFamily: 'var(--resume-font-family, inherit)' }}>
               <span className="font-normal">（职位）</span>
             </div>
           </div>
-          <div className="flex-shrink-0"></div>
+          <div className="flex-1" style={getAlignmentStyle(firstRowLayout.columns[2])}></div>
         </div>
         <div className="italic mb-4" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>（暂无联系信息）</div>
         <div className="border-b border-gray-300 my-4"></div>
@@ -470,57 +503,49 @@ function PersonalInfoSection({ data }) {
     columns[index % 3].push(item)
   })
   
-  // 计算每列的最大宽度
-  const columnWidths = columns.map(column => {
-    const maxLength = column.reduce((max, item) => Math.max(max, item ? item.length : 0), 0)
-    return maxLength * 0.6
-  })
-  
-  // 计算职位文本宽度，用于确定中间列宽度
+  // 第一行：姓名和职位
+  const nameText = data.name && data.name.trim() ? data.name : '（姓名）'
   const titleText = data.title && data.title.trim() ? data.title : '（职位）'
-  const titleWidth = titleText.length * 0.6
-  
-  // 计算中间列的最大宽度（包括职位和联系信息）
-  const middleColumnWidth = Math.max(columnWidths[1], titleWidth)
   
   return (
     <div className="mb-6" style={{ fontSize: 'var(--resume-font-size, 14px)', lineHeight: 'var(--resume-line-height, 1.6)', color: 'var(--resume-text-color, #1f2937)', marginBottom: 'var(--resume-spacing, 1.5em)' }}>
-      {/* 姓名和职位在同一行，使用三列布局 */}
-      <div className="flex items-start justify-between gap-4 w-full mb-2">
+      {/* 第一行：姓名和职位，使用三列布局，支持独立对齐 */}
+      <div className="flex items-start gap-4 w-full mb-2">
         {/* 左列 - 姓名 */}
-        <div className="flex-shrink-0" style={{ minWidth: `${columnWidths[0]}em` }}>
+        <div className="flex-1" style={getAlignmentStyle(firstRowLayout.columns[0])}>
           <div className="font-bold" style={{ fontSize: 'var(--resume-title-font-size, 24px)', color: 'var(--resume-title-color, #111827)', fontFamily: 'var(--resume-font-family, inherit)' }}>
-            {data.name && data.name.trim() ? data.name : '（姓名）'}
+            {nameText}
           </div>
         </div>
-        {/* 中间列 - 职位 */}
-        <div className="flex-shrink-0" style={{ minWidth: `${middleColumnWidth}em` }}>
+        {/* 中列 - 职位 */}
+        <div className="flex-1" style={getAlignmentStyle(firstRowLayout.columns[1])}>
           <div style={{ fontSize: 'var(--resume-title-title-font-size, var(--resume-title-font-size, 24px))', color: 'var(--resume-text-color, #1f2937)', fontFamily: 'var(--resume-font-family, inherit)' }}>
             <span className="font-normal">{titleText}</span>
           </div>
         </div>
         {/* 右列 - 空 */}
-        <div className="flex-shrink-0" style={{ minWidth: `${columnWidths[2]}em` }}></div>
+        <div className="flex-1" style={getAlignmentStyle(firstRowLayout.columns[2])}></div>
       </div>
-      {/* 联系信息使用相同的三列布局 */}
+      
+      {/* 联系信息：使用三列布局，支持独立对齐 */}
       {allItems.length > 0 ? (
-        <div className="flex items-start justify-between gap-4 w-full">
+        <div className="flex items-start gap-4 w-full">
           {/* 左列 */}
-          <div className="flex-shrink-0 space-y-1" style={{ minWidth: `${columnWidths[0]}em` }}>
+          <div className="flex-1 space-y-1" style={getAlignmentStyle(contactRowLayout.columns[0])}>
             {columns[0].map((item, itemIndex) => (
-              <div key={itemIndex} className="text-left whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
+              <div key={itemIndex} className="whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
             ))}
           </div>
-          {/* 中间列 - 联系信息 */}
-          <div className="flex-shrink-0 space-y-1" style={{ minWidth: `${middleColumnWidth}em` }}>
+          {/* 中列 */}
+          <div className="flex-1 space-y-1" style={getAlignmentStyle(contactRowLayout.columns[1])}>
             {columns[1].map((item, itemIndex) => (
-              <div key={itemIndex} className="text-left whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
+              <div key={itemIndex} className="whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
             ))}
           </div>
           {/* 右列 */}
-          <div className="flex-shrink-0 space-y-1" style={{ minWidth: `${columnWidths[2]}em` }}>
+          <div className="flex-1 space-y-1" style={getAlignmentStyle(contactRowLayout.columns[2])}>
             {columns[2].map((item, itemIndex) => (
-              <div key={itemIndex} className="text-left whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
+              <div key={itemIndex} className="whitespace-nowrap" style={{ fontSize: 'var(--resume-font-size, 14px)', fontFamily: 'var(--resume-font-family, inherit)' }}>{item}</div>
             ))}
           </div>
         </div>
