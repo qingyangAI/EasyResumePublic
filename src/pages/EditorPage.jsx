@@ -561,8 +561,8 @@ function EditorPage() {
   return (
     <div className="min-h-screen bg-white">
       <header className="bg-white/80 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-10">
-        <div className="w-full px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
             <div className="flex items-center gap-3">
               <button
                 onClick={() => navigate('/')}
